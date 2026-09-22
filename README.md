@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # cookie_bites
 
 A new Flutter project.
@@ -15,3 +16,6 @@ A few resources to get you started if this is your first Flutter project:
 For help getting started with Flutter development, view the
 [online documentation](https://docs.flutter.dev/), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
+=======
+# Cookie-Bites
+>>>>>>> 45d4281e041d270430d18ea7b952980d13508dc3
