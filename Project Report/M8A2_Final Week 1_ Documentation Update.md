@@ -1,5 +1,5 @@
-1. Overview
-What the app is, in two or three sentences. What it does and who it is for.
+**1. Overview
+**What the app is, in two or three sentences. What it does and who it is for.
 
 Cookie Bites is a Flutter app that helps home-based pastry and sweet
 businesses track customer orders, expenses, and profit without relying on
@@ -8,19 +8,19 @@ manual spreadsheets or notebooks. It's built for solo or small-team sellers
 profit by hand and want a single place to log orders, track payment status,
 and see their financial summary at a glance.
 
-2. Setup and installation
+**2. Setup and installation**
 Built with:
 - Flutter 3.47.4 
 - Dart SDK version:  3.13.3
 
-Code:
+**Code:**
 git clone https://github.com/ljoraye/Cookie-Bites
 cd cookie-bites
 
-Install Dependencies:
+**Install Dependencies:**
 - flutter pub get
 
-Fonts & Logo:
+**Fonts & Logo:**
 The app uses local font and image assets rather than fetching fonts at
 runtime. Make sure these exist before running:
 
@@ -39,10 +39,10 @@ The app is designed to use Supabase (cloud Postgres + built-in auth) for
 storing orders and expenses per user account. This is not yet connected —
 the Login and Order Board screens currently run on stubbed/mock data.
 
-3. How to run it
+**3. How to run it**
 flutter run -d chrome
 
-4. Features and usage
+**4. Features and usage**
 What the app does and how to use its main screens. Walk through the primary flow, screen by screen.
 
 LOGIN 
@@ -69,7 +69,7 @@ ORDER BOARD
   Issues).
 - Order data is currently 3 hardcoded sample orders, not live data.
 
-5. Project structure
+**5. Project structure**
 A short map of lib/ and the important files, so a reader knows where the screens, models, and state live.
 
 lib/
@@ -93,7 +93,7 @@ lib/
 Screens still to be built (not yet in the repo): Order Entry Form, Expense
 Log, Add Expense dialog, Financial Summary Dashboard and other minor screens such as profile view. 
 
-6. Screenshots
+**6. Screenshots**
 At least one screenshot per screen the app has.
 ### Login Page
 ![Login Page](SCREEN%20SS/login%20page.png)
@@ -101,7 +101,7 @@ At least one screenshot per screen the app has.
 ### Order Board
 ![Order Board](SCREEN%20SS/Order%20Board.png)
 
-7. Known issues and next steps
+**7. Known issues and next steps**
 What is not finished, what is known to be broken, and what you would do next. Being honest here scores; pretending everything is perfect does not.
 - Login is not connected to real authentication — any valid-format
   email/password logs in successfully via a stub.
