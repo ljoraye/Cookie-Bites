@@ -3,7 +3,7 @@
 Cookie Bites is a Flutter app that helps home-based pastry and sweet
 businesses track customer orders, expenses, and profit without relying on
 manual spreadsheets or notebooks. It's built for solo or small-team sellers
-(students, home-based entrepreneurs) who currently compute sales, costs, and
+like students and home-based entrepreneurs who currently compute sales, costs, and
 profit by hand and want a single place to log orders, track payment status,
 and see their financial summary at a glance.
 
@@ -14,7 +14,7 @@ Built with:
 - Dart SDK version:  3.13.3
 
 **Code:**
-git clone https://github.com/ljoraye/Cookie-Bites
+- git clone https://github.com/ljoraye/Cookie-Bites
 
 **Install Dependencies:**
 - flutter pub get
