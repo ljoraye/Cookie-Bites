@@ -22,22 +22,13 @@ cd cookie-bites
 
 **Fonts & Logo:**
 The app uses local font and image assets rather than fetching fonts at
-runtime. Make sure these exist before running:
+runtime. 
 
-assets/
-├── fonts/
-│   ├── DarumadropOne-Regular.ttf
-│   ├── Inter_24pt-Regular.ttf
-│   ├── Inter_24pt-SemiBold.ttf
-│   └── Inter_24pt-Bold.ttf
-└── images/
-    └── cookie_bites_logo.png
-    └── google_logo.png
-    └── apple_logo.png
+![assets](SCREEN%20SS/Assets.png)
 
 The app is designed to use Supabase (cloud Postgres + built-in auth) for
 storing orders and expenses per user account. This is not yet connected —
-the Login and Order Board screens currently run on stubbed/mock data.
+the Login and Order Board screens currently run on mock data.
 
 **3. How to run it**
 flutter run -d chrome
@@ -71,23 +62,7 @@ ORDER BOARD
 
 **5. Project structure**
 
-lib/
-├── main.dart                     # App entry point, starts on LoginPage
-├── theme/
-│   └── app_theme.dart             # Colors, spacing scale, type scale, ThemeData
-├── models/
-│   └── order.dart                 # Order, OrderItem, FulfillmentType, PaymentMode
-├── widgets/                       # Reusable components used across screens
-│   ├── primary_button.dart
-│   ├── app_text_field.dart
-│   ├── user_header.dart
-│   ├── app_search_bar.dart
-│   ├── category_chips.dart
-│   ├── order_card.dart
-│   └── app_nav_bar.dart
-└── screens/
-    ├── login_page.dart            # Login screen
-    └── order_board_page.dart      # Order Board screen
+![lib](SCREEN%20SS/lib.png)
 
 Screens still to be built (not yet in the repo): Order Entry Form, Expense
 Log, Add Expense dialog, Financial Summary Dashboard and other minor screens such as profile view. 
