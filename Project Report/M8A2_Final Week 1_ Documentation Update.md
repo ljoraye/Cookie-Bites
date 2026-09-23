@@ -1,5 +1,4 @@
-**1. Overview
-**What the app is, in two or three sentences. What it does and who it is for.
+**1. Overview**
 
 Cookie Bites is a Flutter app that helps home-based pastry and sweet
 businesses track customer orders, expenses, and profit without relying on
@@ -9,6 +8,7 @@ profit by hand and want a single place to log orders, track payment status,
 and see their financial summary at a glance.
 
 **2. Setup and installation**
+
 Built with:
 - Flutter 3.47.4 
 - Dart SDK version:  3.13.3
@@ -70,7 +70,6 @@ ORDER BOARD
 - Order data is currently 3 hardcoded sample orders, not live data.
 
 **5. Project structure**
-A short map of lib/ and the important files, so a reader knows where the screens, models, and state live.
 
 lib/
 ├── main.dart                     # App entry point, starts on LoginPage
@@ -94,7 +93,7 @@ Screens still to be built (not yet in the repo): Order Entry Form, Expense
 Log, Add Expense dialog, Financial Summary Dashboard and other minor screens such as profile view. 
 
 **6. Screenshots**
-At least one screenshot per screen the app has.
+
 ### Login Page
 ![Login Page](SCREEN%20SS/login%20page.png)
 
@@ -102,7 +101,7 @@ At least one screenshot per screen the app has.
 ![Order Board](SCREEN%20SS/Order%20Board.png)
 
 **7. Known issues and next steps**
-What is not finished, what is known to be broken, and what you would do next. Being honest here scores; pretending everything is perfect does not.
+
 - Login is not connected to real authentication — any valid-format
   email/password logs in successfully via a stub.
 - Order Board displays hardcoded mock data, not data from a database.
