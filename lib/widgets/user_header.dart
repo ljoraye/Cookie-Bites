@@ -44,6 +44,7 @@ class UserHeader extends StatelessWidget implements PreferredSizeWidget {
                         color: Colors.white,
                         fontWeight: FontWeight.w600,
                         fontSize: 13,
+                        height: 1.2,
                       ),
                     ),
                     Text(
@@ -51,15 +52,16 @@ class UserHeader extends StatelessWidget implements PreferredSizeWidget {
                       style: TextStyle(
                         color: Colors.white.withOpacity(0.8),
                         fontSize: 10,
+                        height: 1.2,
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(width: 10),
                 const CircleAvatar(
-                  radius: 14,
+                  radius: 16,
                   backgroundColor: Colors.white24,
-                  child: Icon(Icons.person, size: 16, color: Colors.white),
+                  child: Icon(Icons.person, size: 18, color: Colors.white),
                 ),
               ],
             ),

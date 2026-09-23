@@ -57,23 +57,10 @@ class _LoginPageState extends State<LoginPage> {
             child: Column(
               children: [
                 const SizedBox(height: 48),
-                Text(
-                  'Cookie',
-                  textAlign: TextAlign.center,
-                  style: AppTextStyles.logo.copyWith(
-                    fontSize: 42,
-                    color: Colors.white,
-                    height: 0.9,
-                  ),
-                ),
-                Text(
-                  'bites',
-                  textAlign: TextAlign.center,
-                  style: AppTextStyles.logo.copyWith(
-                    fontSize: 42,
-                    color: AppColors.secondary,
-                    height: 0.9,
-                  ),
+                Image.asset(
+                  'assets/images/cookie_bites_logo.png',
+                  width: 260,
+                  fit: BoxFit.contain,
                 ),
                 const SizedBox(height: 32),
                 const Text(

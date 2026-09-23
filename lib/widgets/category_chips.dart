@@ -27,8 +27,9 @@ class CategoryChips extends StatelessWidget {
           return ChoiceChip(
             label: Text(category),
             selected: isSelected,
+            showCheckmark: false,
             onSelected: (_) => onSelected(category),
-            selectedColor: AppColors.secondary,
+            selectedColor: AppColors.primary,
             backgroundColor: Colors.white,
             labelStyle: TextStyle(
               color: isSelected ? Colors.white : AppColors.onSurface,
