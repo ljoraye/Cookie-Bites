@@ -24,7 +24,7 @@ cd cookie-bites
 The app uses local font and image assets rather than fetching fonts at
 runtime. 
 
-![assets](SCREEN%20SS/Assets.png)
+![assets](SCREEN%20SS/assets.png)
 
 The app is designed to use Supabase (cloud Postgres + built-in auth) for
 storing orders and expenses per user account. This is not yet connected —
