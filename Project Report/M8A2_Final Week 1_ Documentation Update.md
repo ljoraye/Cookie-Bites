@@ -15,7 +15,6 @@ Built with:
 
 **Code:**
 git clone https://github.com/ljoraye/Cookie-Bites
-
 cd cookie-bites
 
 **Install Dependencies:**
