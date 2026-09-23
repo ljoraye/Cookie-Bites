@@ -2,7 +2,7 @@
 
 **1. My goal this week**
 
-Set up the foundational structure of my Flutter project before building out individual screens — shared theme, models, and reusable widgets, then start on the Login and Order Board screens.
+Set up the foundational structure of my Flutter project before building out individual screens, shared theme, models, and reusable widgets, then start on the Login and Order Board screens.
 
 **2. What I did**
 
@@ -17,4 +17,4 @@ The google_fonts server-fetch approach caused noticeably slow load times during 
 
 **4. What I learned**
 
-I learned how Flutter's entry point (main.dart) actually connects to the rest of the app, and that flutter create's boilerplate needs to be deliberately replaced, not just built around. I also learned the practical difference between runtime-fetched fonts (google_fonts package) and locally bundled fonts, including how to declare custom fonts in pubspec.yaml and reference them correctly in a theme file. More generally, I got a clearer sense of why setting up shared/reusable code early pays off: it's already showing me where I'd otherwise be duplicating work across screens. I'm also slowly getting the hang of Flutter overall. I can more easily tell which part of my code is causing an issue and what needs to change to fix it.
+I learned how Flutter's entry point, main.dart, actually connects to the rest of the app, and that flutter create's boilerplate needs to be deliberately replaced, not just built around. I also learned the practical difference between runtime-fetched fonts in google_fonts package and locally bundled fonts, including how to declare custom fonts in pubspec.yaml and reference them correctly in a theme file. More generally, I got a clearer sense of why setting up shared and reusable code early pays off. It's already showing me where I'd otherwise be duplicating work across screens. I'm also slowly getting the hang of Flutter overall. I can more easily tell which part of my code is causing an issue and what needs to change to fix it.
