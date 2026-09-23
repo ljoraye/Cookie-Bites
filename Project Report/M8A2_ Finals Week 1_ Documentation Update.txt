@@ -95,6 +95,8 @@ Log, Add Expense dialog, Financial Summary Dashboard and other minor screens suc
 
 6. Screenshots
 At least one screenshot per screen the app has.
+https://github.com/ljoraye/Cookie-Bites/blob/main/Project%20Report/SCREEN%20SS/login%20page.png
+https://github.com/ljoraye/Cookie-Bites/blob/main/Project%20Report/SCREEN%20SS/login%20page.png
 
 7. Known issues and next steps
 What is not finished, what is known to be broken, and what you would do next. Being honest here scores; pretending everything is perfect does not.
