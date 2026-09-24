@@ -76,6 +76,8 @@ flutter:
 
   assets:
     - assets/images/cookie_bites_logo.png
+    - assets/images/google_logo.png
+    - assets/images/apple_logo.png
 
   fonts:
       - family: DarumadropOne

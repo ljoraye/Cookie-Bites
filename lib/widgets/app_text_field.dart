@@ -36,16 +36,23 @@ class AppTextField extends StatelessWidget {
           obscureText: obscureText,
           keyboardType: keyboardType,
           validator: validator,
+          style: const TextStyle(color: Colors.black),
+          cursorColor: Colors.black,
           decoration: InputDecoration(
             hintText: hintText,
+            hintStyle: const TextStyle(color: Color(0xFFBDBDBD)),
+            errorStyle: const TextStyle(
+              fontWeight: FontWeight.bold,
+              color: Colors.red,
+            ),
             prefixIcon: prefixIcon,
             suffixIcon: suffixIcon,
             filled: true,
             fillColor: Colors.white,
             contentPadding:
-                const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(14),
+              borderRadius: BorderRadius.circular(28),
               borderSide: BorderSide.none,
             ),
           ),

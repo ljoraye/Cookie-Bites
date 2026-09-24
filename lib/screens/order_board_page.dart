@@ -75,8 +75,7 @@ class _OrderBoardPageState extends State<OrderBoardPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: UserHeader(
-        name: 'LJ_ORAYE',
-        role: 'Co-owner',
+        name: 'LOUISE JACKSON',
         onMenuTap: () {
           // TODO: open the navigation/settings drawer
         },
@@ -93,13 +92,23 @@ class _OrderBoardPageState extends State<OrderBoardPage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('ORDERS', style: AppTextStyles.heading()),
+                const Text(
+                  'ORDERS', 
+                  style: TextStyle(
+                    fontFamily: AppTextStyles.logoFontFamily,
+                    fontSize:30,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
                 ElevatedButton.icon(
                   onPressed: () {
                     // TODO: Navigator.push to the Order Entry Form
                   },
                   icon: const Icon(Icons.add, size: 18),
-                  label: const Text('New'),
+                  label: const Text(
+                    'New',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary,
                     foregroundColor: Colors.white,
@@ -194,6 +203,54 @@ class _OrderBoardPageState extends State<OrderBoardPage> {
           OrderItem(product: 'Biscoff', quantity: 2, unitPrice: 110),
         ],
         fulfillmentType: FulfillmentType.pickUp,
+        paymentMode: PaymentMode.gcash,
+        isPaid: false,
+        cogs: 130,
+      ),
+      Order(
+        id: '4',
+        customerName: 'Keon Almo',
+        deliveryDate: DateTime.now(),
+        items: const [
+          OrderItem(product: 'Biscoff', quantity: 2, unitPrice: 110),
+        ],
+        fulfillmentType: FulfillmentType.meetUp,
+        paymentMode: PaymentMode.gcash,
+        isPaid: false,
+        cogs: 130,
+      ),
+      Order(
+        id: '5',
+        customerName: 'Sarah Mae',
+        deliveryDate: DateTime.now(),
+        items: const [
+          OrderItem(product: 'Biscoff', quantity: 2, unitPrice: 110),
+        ],
+        fulfillmentType: FulfillmentType.pickUp,
+        paymentMode: PaymentMode.gcash,
+        isPaid: false,
+        cogs: 130,
+      ),
+      Order(
+        id: '6',
+        customerName: 'Princess Joy',
+        deliveryDate: DateTime.now(),
+        items: const [
+          OrderItem(product: 'Biscoff', quantity: 2, unitPrice: 110),
+        ],
+        fulfillmentType: FulfillmentType.delivery,
+        paymentMode: PaymentMode.gcash,
+        isPaid: false,
+        cogs: 130,
+      ),
+      Order(
+        id: '7',
+        customerName: 'Lili Cruz',
+        deliveryDate: DateTime.now(),
+        items: const [
+          OrderItem(product: 'Biscoff', quantity: 2, unitPrice: 110),
+        ],
+        fulfillmentType: FulfillmentType.meetUp,
         paymentMode: PaymentMode.gcash,
         isPaid: false,
         cogs: 130,

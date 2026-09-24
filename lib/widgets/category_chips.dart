@@ -15,31 +15,42 @@ class CategoryChips extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 36,
-      child: ListView.separated(
-        scrollDirection: Axis.horizontal,
-        itemCount: categories.length,
-        separatorBuilder: (_, __) => const SizedBox(width: 8),
-        itemBuilder: (context, index) {
-          final category = categories[index];
+    return Container(
+      padding: const EdgeInsets.all(4),
+      decoration: BoxDecoration(
+        color: AppColors.background,
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: AppColors.primary, width: 1.2),
+      ),
+      child: Row(
+        children: categories.map((category) {
           final isSelected = category == selected;
-          return ChoiceChip(
-            label: Text(category),
-            selected: isSelected,
-            showCheckmark: false,
-            onSelected: (_) => onSelected(category),
-            selectedColor: AppColors.primary,
-            backgroundColor: Colors.white,
-            labelStyle: TextStyle(
-              color: isSelected ? Colors.white : AppColors.onSurface,
-              fontSize: 12,
-              fontWeight: FontWeight.w600,
+          return Expanded(
+            child: GestureDetector(
+              onTap: () => onSelected(category),
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 150),
+                padding: const EdgeInsets.symmetric(vertical: 8),
+                decoration: BoxDecoration(
+                  color: isSelected ? AppColors.primary : Colors.transparent,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                alignment: Alignment.center,
+                child: Text(
+                  category,
+                  textAlign: TextAlign.center,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    color: isSelected ? Colors.white : AppColors.onSurface,
+                    fontWeight:
+                        isSelected ? FontWeight.bold : FontWeight.w600,
+                    fontSize: 12,
+                  ),
+                ),
+              ),
             ),
-            shape:
-                StadiumBorder(side: BorderSide(color: Colors.grey.shade300)),
           );
-        },
+        }).toList(),
       ),
     );
   }

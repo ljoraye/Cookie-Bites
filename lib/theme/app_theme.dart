@@ -66,7 +66,7 @@ ThemeData buildAppTheme() {
     onSecondary: AppColors.onSecondary,
     surface: AppColors.surface,
     onSurface: AppColors.onSurface,
-    error: AppColors.error,
+    error: const Color.fromARGB(255, 249, 0, 0),
   );
 
   return ThemeData(

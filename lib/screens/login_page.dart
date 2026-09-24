@@ -59,17 +59,18 @@ class _LoginPageState extends State<LoginPage> {
                 const SizedBox(height: 48),
                 Image.asset(
                   'assets/images/cookie_bites_logo.png',
-                  width: 260,
+                  width: MediaQuery.of(context).size.width * 0.80,
                   fit: BoxFit.contain,
                 ),
                 const SizedBox(height: 32),
                 const Text(
-                  'LOGIN',
+                  'READY TO SELL?',
                   style: TextStyle(
+                    fontFamily: AppTextStyles.logoFontFamily,
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
                     letterSpacing: 2,
-                    fontSize: 16,
+                    fontSize: 30,
                   ),
                 ),
                 const SizedBox(height: 20),
@@ -77,7 +78,7 @@ class _LoginPageState extends State<LoginPage> {
                   controller: _emailController,
                   hintText: 'Email',
                   keyboardType: TextInputType.emailAddress,
-                  prefixIcon: const Icon(Icons.email_outlined, size: 20),
+                  prefixIcon: const Icon(Icons.email_outlined, size: 20, color: Color(0xFFBDBDBD)),
                   validator: (value) {
                     if (value == null || value.trim().isEmpty) {
                       return 'Enter your email';
@@ -91,13 +92,14 @@ class _LoginPageState extends State<LoginPage> {
                   controller: _passwordController,
                   hintText: 'Password',
                   obscureText: _obscurePassword,
-                  prefixIcon: const Icon(Icons.lock_outline, size: 20),
+                  prefixIcon: const Icon(Icons.lock_outline, size: 20, color: Color(0xFFBDBDBD)),
                   suffixIcon: IconButton(
                     icon: Icon(
                       _obscurePassword
                           ? Icons.visibility_off_outlined
                           : Icons.visibility_outlined,
                       size: 20,
+                      color: const Color(0xFFBDBDBD),
                     ),
                     onPressed: () {
                       setState(() => _obscurePassword = !_obscurePassword);
@@ -144,7 +146,11 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 const SizedBox(height: 24),
                 _OAuthButton(
-                  icon: Icons.g_mobiledata, // swap for a proper Google asset
+                  icon: Image.asset(
+                    'assets/images/google_logo.png',
+                    height: 27,
+                    width: 27,
+                  ),// swap for a proper Google asset
                   label: 'Continue with Google',
                   backgroundColor: const Color(0xFFD8F26D),
                   textColor: Colors.black87,
@@ -154,7 +160,11 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 const SizedBox(height: 12),
                 _OAuthButton(
-                  icon: Icons.apple,
+                  icon: Image.asset(
+                    'assets/images/apple_logo.png',
+                    height: 27,
+                    width: 27,
+                  ),// swap for a proper Apple asset
                   label: 'Continue with Apple',
                   backgroundColor: Colors.white,
                   textColor: Colors.black87,
@@ -196,7 +206,7 @@ class _LoginPageState extends State<LoginPage> {
 }
 
 class _OAuthButton extends StatelessWidget {
-  final IconData icon;
+  final Widget icon;
   final String label;
   final Color backgroundColor;
   final Color textColor;
@@ -217,7 +227,7 @@ class _OAuthButton extends StatelessWidget {
       height: 48,
       child: ElevatedButton.icon(
         onPressed: onPressed,
-        icon: Icon(icon, color: textColor),
+        icon: icon,
         label: Text(label, style: TextStyle(color: textColor)),
         style: ElevatedButton.styleFrom(
           backgroundColor: backgroundColor,

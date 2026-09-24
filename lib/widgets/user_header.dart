@@ -3,14 +3,12 @@ import '../theme/app_theme.dart';
 
 class UserHeader extends StatelessWidget implements PreferredSizeWidget {
   final String name;
-  final String role;
   final VoidCallback? onMenuTap;
   final VoidCallback? onProfileTap;
 
   const UserHeader({
     super.key,
     required this.name,
-    required this.role,
     this.onMenuTap,
     this.onProfileTap,
   });
@@ -34,28 +32,15 @@ class UserHeader extends StatelessWidget implements PreferredSizeWidget {
             onTap: onProfileTap,
             child: Row(
               mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Text(
-                      name,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w600,
-                        fontSize: 13,
-                        height: 1.2,
-                      ),
-                    ),
-                    Text(
-                      role,
-                      style: TextStyle(
-                        color: Colors.white.withOpacity(0.8),
-                        fontSize: 10,
-                        height: 1.2,
-                      ),
-                    ),
-                  ],
+                Text(
+                  name,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 13,
+                  ),
                 ),
                 const SizedBox(width: 10),
                 const CircleAvatar(
