@@ -81,9 +81,7 @@ Log, Add Expense dialog, Financial Summary Dashboard and other minor screens suc
 - Order Board displays hardcoded mock data, not data from a database.
 - Google/Apple sign-in buttons, "Forgot Password?", and "Sign up" are
   UI-only and not wired to any flow yet.
-- The hamburger menu, profile tap, "+ New" button, order card tap, and
-  bottom navigation bar are present visually but have no navigation
-  behind them yet.
+- The hamburger menu, profile tap
 - Supabase project setup (tables, auth) has not been completed yet — this
   is the top-priority next step called out in the project proposal.
 
