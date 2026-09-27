@@ -6,6 +6,9 @@ import '../widgets/app_search_bar.dart';
 import '../widgets/category_chips.dart';
 import '../widgets/order_card.dart';
 import '../widgets/user_header.dart';
+import 'expenses_log_page.dart';
+import 'financial_summary_page.dart';
+import 'order_entry_form_page.dart';
 
 class OrderBoardPage extends StatefulWidget {
   const OrderBoardPage({super.key});
@@ -71,6 +74,26 @@ class _OrderBoardPageState extends State<OrderBoardPage> {
     }).toList();
   }
 
+  void _navigateToTab(int index) {
+    if (index == 0) return; // already on this tab
+    late final Widget page;
+    switch (index) {
+      case 1:
+        page = const OrderEntryFormPage();
+        break;
+      case 2:
+        page = const ExpensesLogPage();
+        break;
+      case 3:
+        page = const FinancialSummaryPage();
+        break;
+      default:
+        return;
+    }
+    Navigator.of(context)
+        .pushReplacement(MaterialPageRoute(builder: (_) => page));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -102,7 +125,11 @@ class _OrderBoardPageState extends State<OrderBoardPage> {
                 ),
                 ElevatedButton.icon(
                   onPressed: () {
-                    // TODO: Navigator.push to the Order Entry Form
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => const OrderEntryFormPage(),
+                      ),
+                    );
                   },
                   icon: const Icon(Icons.add, size: 18),
                   label: const Text(
@@ -146,7 +173,13 @@ class _OrderBoardPageState extends State<OrderBoardPage> {
                               return OrderCard(
                                 order: order,
                                 onTap: () {
-                                  // TODO: open the Order Entry Form in edit mode
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (_) => OrderEntryFormPage(
+                                        existingOrder: order,
+                                      ),
+                                    ),
+                                  );
                                 },
                               );
                             },
@@ -160,7 +193,7 @@ class _OrderBoardPageState extends State<OrderBoardPage> {
         currentIndex: _navIndex,
         onTap: (index) {
           setState(() => _navIndex = index);
-          // TODO: navigate to Dashboard / New Order / Expenses / Financials
+          _navigateToTab(index);
         },
       ),
     );
