@@ -8,7 +8,7 @@ Finished the remaining MVP screens, Order Entry Form, Expenses Log, Add Expense 
 
 **2. Why (what these changes were for)**
 
-All six MVP screens needed to be built and connected before moving to the backend, since the proposal scoped the app around them working together. Visual polish matters because the Design System doc is what gets compared against the running app. Starting Supabase now leaves real debugging time before the deadline instead of rushing it at the end.
+All six MVP screens needed to be built and connected before moving to the backend, since the proposal scoped the app around them working together. Visual polish matters because I compare it to my Design System. Starting Supabase now leaves real debugging time before the deadline instead of rushing it at the end.
 
 **3. What broke or what I got stuck on (the honest part: errors, things that did not work, where you are stuck)**
 
@@ -16,4 +16,4 @@ git push got rejected from diverged branches, then the merge failed again becaus
 
 **4. What is left (what still has to be done before the final)**
 
-Remaining main screens: Profile view screen and hamburger menu/settings. I am also starting to set up my Supabase, I already have the tables, I just have to connect it to Flutter.
+Remaining screens: Profile view screen and hamburger menu/settings. I am also starting to set up my Supabase, I already have the tables, I just have to connect it to Flutter.
