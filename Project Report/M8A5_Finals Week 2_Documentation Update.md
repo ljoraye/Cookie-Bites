@@ -59,9 +59,12 @@ ORDER BOARD
   Issues).
 - Order data is currently 3 hardcoded sample orders, not live data.
 
+ORDER ENTRY FORM
+
 **5. Project structure**
 
-![lib](SCREEN%20SS/lib.png)
+### Updated Lib Structure
+![Updated Lib Structure](./SCREEN%20SS/lib%20(update%201).png)
 
 Screens still to be built (not yet in the repo): Order Entry Form, Expense
 Log, Add Expense dialog, Financial Summary Dashboard and other minor screens such as profile view. 
@@ -73,6 +76,18 @@ Log, Add Expense dialog, Financial Summary Dashboard and other minor screens suc
 
 ### Order Board
 ![Order Board](SCREEN%20SS/Order%20Board.png)
+
+### Order Entry Form
+![Order Entry Form](./SCREEN%20SS/Order%20Entry%20Form.png)
+
+### Expenses
+![Expenses](./SCREEN%20SS/Expenses.png)
+
+### Add Expense
+![Add Expense](./SCREEN%20SS/Add%20Expense.png)
+
+### Financial Summary Dashboard
+![Financial Summary Dashboard](./SCREEN%20SS/Financial%20Summary%20Dashboard.png)
 
 **7. Known issues and next steps**
 
