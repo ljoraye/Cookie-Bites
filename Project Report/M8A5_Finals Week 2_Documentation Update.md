@@ -115,7 +115,7 @@ ADD EXPENSE
 
 **7. Known issues and next steps**
 
-ISSUES
+**ISSUES**
 1. Login is not connected to real authentication — any valid-format email/password logs in successfully via a stub.
 2. Order Board, Order Entry Form, Expenses Log, and Financial Summary all run on hardcoded mock data, not real data from a database.
 3. Order Entry Form does not yet persist new or edited orders — saving validates the form and closes the screen, but the order does not appear back on the Order Board.
@@ -127,7 +127,7 @@ ISSUES
 9. The Profile view screen and a hamburger menu/settings screen have not been built yet.
 10. Supabase project setup is partially complete — the orders and expenses tables exist with Row Level Security policies in place, but the Flutter app is not yet connected to Supabase; this is the top-priority next step.
 
-NEXT STEPS
+**NEXT STEPS**
 1. Add supabase_flutter to the project and initialize it in main.dart.
 2. Replace the mock-data stubs in Login, Order Board, Order Entry Form, and Expenses Log with real Supabase calls (auth, and reading/writing orders/expenses).
 3. Build the Profile view screen and the hamburger menu/settings screen.
