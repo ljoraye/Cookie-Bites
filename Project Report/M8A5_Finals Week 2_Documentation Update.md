@@ -93,9 +93,6 @@ ADD EXPENSE
 ### Updated Lib Structure
 ![Updated Lib Structure](./SCREEN%20SS/lib%20(update%201).png)
 
-Screens still to be built (not yet in the repo): Order Entry Form, Expense
-Log, Add Expense dialog, Financial Summary Dashboard and other minor screens such as profile view. 
-
 **6. Screenshots**
 
 ### Login Page
