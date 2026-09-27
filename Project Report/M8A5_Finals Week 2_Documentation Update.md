@@ -60,6 +60,33 @@ ORDER BOARD
 - Order data is currently 3 hardcoded sample orders, not live data.
 
 ORDER ENTRY FORM
+- Enter the customer's name and pick a delivery date (tapping the date field opens a date picker).
+- Select the fulfillment type — Pick-up, Delivery, or Meet-up — from the segmented chips.
+- Adjust quantities for each product (Pistachio, Matcha, Biscoff) using the +/- selector next to each; Total, Cost of Goods, and Profit update live as quantities change.
+- Select a payment mode — Cash, Gcash, or Bank Transfer — from the segmented chips.
+- Optional note field for anything extra about the order.
+- Tapping Add Order validates the form (customer name required, at least one item required) and returns to the Order Board. Tapping an existing order card on the Order Board opens this same form pre-filled for editing, with the title and button switching to "Edit Order" / "Update Order".
+- Currently mock: saving does not yet write to a database — it validates and closes the screen, but the new/edited order does not appear back on the Order Board yet.
+
+EXPENSES LOG 
+- Four summary cards at the top total your expenses by category — Marketing, Packaging, Delivery, and an overall Total.
+- Below that, a scrollable list shows each individual expense with its name, description, category tag, date, and amount.
+- Tapping the delete icon on an expense card removes it from the list immediately.
+- Tapping + Add opens the Add Expense dialog (see below).
+- Currently mock: starts with 3 sample expenses; new expenses added through the dialog do appear in this list right away, but nothing is saved permanently between app restarts yet.
+
+ADD EXPENSE
+- A pop-out dialog over the Expenses Log screen (not a separate full page).
+- Fields: Expense Name, Date (tap to open a date picker), Description, Category, and Amount — all except Category are required.
+- Tapping the X in the top corner closes the dialog without saving.
+ -Tapping ADD ENTRY validates the form and adds the new expense to the Expenses Log list.
+
+ FINANCIAL SUMMARY DASHBOARD
+- A Net Profit card at the top shows the current month's net profit, alongside Revenue, Expenses, and Margin.
+- Three smaller cards show Total Orders, Paid Orders, and Unpaid Orders counts.
+- A Monthly Trend chart compares Revenue and Expenses across recent months as paired bars.
+- A Top Ordered row shows which products have sold the most, scrollable horizontally.
+- Currently mock: every figure on this screen (net profit, revenue, order counts, the monthly trend, top products) is placeholder data, not calculated from real orders or expenses yet.
 
 **5. Project structure**
 
@@ -91,12 +118,24 @@ Log, Add Expense dialog, Financial Summary Dashboard and other minor screens suc
 
 **7. Known issues and next steps**
 
-- Login is not connected to real authentication — any valid-format
-  email/password logs in successfully via a stub.
-- Order Board displays hardcoded mock data, not data from a database.
-- Google/Apple sign-in buttons, "Forgot Password?", and "Sign up" are
-  UI-only and not wired to any flow yet.
-- The hamburger menu, profile tap
-- Supabase project setup (tables, auth) has not been completed yet — this
-  is the top-priority next step called out in the project proposal.
+ISSUES
+1. Login is not connected to real authentication — any valid-format email/password logs in successfully via a stub.
+2. Order Board, Order Entry Form, Expenses Log, and Financial Summary all run on hardcoded mock data, not real data from a database.
+3. Order Entry Form does not yet persist new or edited orders — saving validates the form and closes the screen, but the order does not appear back on the Order Board.
+4. Expenses added through the Add Expense dialog only persist in memory — they reset if the app restarts.
+5. Every figure on the Financial Summary Dashboard (net profit, revenue, order counts, monthly trend, top products) is placeholder data, not calculated from real orders/expenses.
+6. Google/Apple sign-in buttons now show the real logos but are still UI-only — tapping them does not trigger an actual sign-in flow.
+7. "Forgot Password?" and "Sign up" are UI-only and not wired to any flow yet.
+8. The hamburger menu and profile tap (top-right avatar) are present on every screen but have no action behind them yet.
+9. The Profile view screen and a hamburger menu/settings screen have not been built yet.
+10. Supabase project setup is partially complete — the orders and expenses tables exist with Row Level Security policies in place, but the Flutter app is not yet connected to Supabase; this is the top-priority next step.
+
+NEXT STEPS
+1. Add supabase_flutter to the project and initialize it in main.dart.
+2. Replace the mock-data stubs in Login, Order Board, Order Entry Form, and Expenses Log with real Supabase calls (auth, and reading/writing orders/expenses).
+3. Build the Profile view screen and the hamburger menu/settings screen.
+4. Wire the hamburger menu and profile tap to their respective screens once built.
+5. Replace Financial Summary's placeholder figures with real aggregates computed from the orders/expenses tables.
+
+
 
