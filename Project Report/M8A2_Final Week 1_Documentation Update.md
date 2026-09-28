@@ -87,3 +87,12 @@ Log, Add Expense dialog, Financial Summary Dashboard and other minor screens suc
 - Supabase project setup (tables, auth) has not been completed yet — this
   is the top-priority next step called out in the project proposal.
 
+**8. AI USAGE**
+- Claude provided the starting code structure for the Login and Order
+  Board screens, based on my own Proposal, Mockup, and Design System
+  documents. I reviewed it, ran it, edited, and adapted it to match my prototype.
+- Helped me debug setup issues: font and image asset path errors, a
+  leftover default `main.dart`, and `pubspec.yaml` indentation mistakes.
+- Suggested the README structure, which I filled in with my own project
+  details.
+
