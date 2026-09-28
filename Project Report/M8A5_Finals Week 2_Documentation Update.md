@@ -134,5 +134,17 @@ ADD EXPENSE
 4. Wire the hamburger menu and profile tap to their respective screens once built.
 5. Replace Financial Summary's placeholder figures with real aggregates computed from the orders/expenses tables.
 
+**8. AI USAGE**
 
-
+- Claude provided the starting code structure for the Order Entry Form,
+  Expenses Log, Add Expense dialog, and Financial Summary Dashboard,
+  following the styling of my existing screens. I reviewed, tested, edited, and
+  integrated these into my project.
+- I directed the visual refinements to Login and Order Board (local
+  fonts, logo image, card borders and shadows, segmented filter chips,
+  text field styling, header alignment), and Claude suggested the code
+  for each change, which I applied and tuned myself.
+- Claude wrote the SQL for my Supabase `orders` and `expenses` tables and
+  Row Level Security policies, based on the schema in my proposal.
+- Helped me debug a git merge failure caused by colons in filenames being
+  invalid on Windows.
