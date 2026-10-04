@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/order.dart';
 import '../theme/app_theme.dart';
+import '../widgets/app_drawer.dart';
 import '../widgets/app_nav_bar.dart';
 import '../widgets/app_search_bar.dart';
 import '../widgets/category_chips.dart';
@@ -18,6 +19,7 @@ class OrderBoardPage extends StatefulWidget {
 }
 
 class _OrderBoardPageState extends State<OrderBoardPage> {
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
   final _searchController = TextEditingController();
   final List<String> _categories = const [
     'All Orders',
@@ -74,6 +76,17 @@ class _OrderBoardPageState extends State<OrderBoardPage> {
     }).toList();
   }
 
+  void _togglePaid(Order order) {
+    // TODO: replace with a real Supabase update once your table is live,
+    // e.g.: await Supabase.instance.client.from('orders')
+    //   .update({'payment_status': newStatus}).eq('id', order.id);
+    setState(() {
+      _orders = _orders
+          .map((o) => o.id == order.id ? o.copyWith(isPaid: !o.isPaid) : o)
+          .toList();
+    });
+  }
+
   void _navigateToTab(int index) {
     if (index == 0) return; // already on this tab
     late final Widget page;
@@ -97,11 +110,11 @@ class _OrderBoardPageState extends State<OrderBoardPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
+      drawer: const AppDrawer(),
       appBar: UserHeader(
         name: 'LOUISE JACKSON',
-        onMenuTap: () {
-          // TODO: open the navigation/settings drawer
-        },
+        onMenuTap: () => _scaffoldKey.currentState?.openDrawer(),
         onProfileTap: () {
           // TODO: open profile/account settings
         },
@@ -115,14 +128,12 @@ class _OrderBoardPageState extends State<OrderBoardPage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
-                  'ORDERS', 
-                  style: TextStyle(
-                    fontFamily: AppTextStyles.logoFontFamily,
-                    fontSize:30,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+                Text('ORDERS', 
+                style: const TextStyle(
+                fontFamily: AppTextStyles.logoFontFamily,
+                fontSize: 26,
+                fontWeight: FontWeight.bold,
+              ),),
                 ElevatedButton.icon(
                   onPressed: () {
                     Navigator.of(context).push(
@@ -135,7 +146,7 @@ class _OrderBoardPageState extends State<OrderBoardPage> {
                   label: const Text(
                     'New',
                     style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
+                  ),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary,
                     foregroundColor: Colors.white,
@@ -172,6 +183,7 @@ class _OrderBoardPageState extends State<OrderBoardPage> {
                               final order = _filteredOrders[index];
                               return OrderCard(
                                 order: order,
+                                onTogglePaid: () => _togglePaid(order),
                                 onTap: () {
                                   Navigator.of(context).push(
                                     MaterialPageRoute(
@@ -227,6 +239,7 @@ class _OrderBoardPageState extends State<OrderBoardPage> {
         paymentMode: PaymentMode.cash,
         isPaid: true,
         cogs: 150,
+        address: '45 Sampaguita St., Angeles City',
       ),
       Order(
         id: '3',
@@ -236,54 +249,6 @@ class _OrderBoardPageState extends State<OrderBoardPage> {
           OrderItem(product: 'Biscoff', quantity: 2, unitPrice: 110),
         ],
         fulfillmentType: FulfillmentType.pickUp,
-        paymentMode: PaymentMode.gcash,
-        isPaid: false,
-        cogs: 130,
-      ),
-      Order(
-        id: '4',
-        customerName: 'Keon Almo',
-        deliveryDate: DateTime.now(),
-        items: const [
-          OrderItem(product: 'Biscoff', quantity: 2, unitPrice: 110),
-        ],
-        fulfillmentType: FulfillmentType.meetUp,
-        paymentMode: PaymentMode.gcash,
-        isPaid: false,
-        cogs: 130,
-      ),
-      Order(
-        id: '5',
-        customerName: 'Sarah Mae',
-        deliveryDate: DateTime.now(),
-        items: const [
-          OrderItem(product: 'Biscoff', quantity: 2, unitPrice: 110),
-        ],
-        fulfillmentType: FulfillmentType.pickUp,
-        paymentMode: PaymentMode.gcash,
-        isPaid: false,
-        cogs: 130,
-      ),
-      Order(
-        id: '6',
-        customerName: 'Princess Joy',
-        deliveryDate: DateTime.now(),
-        items: const [
-          OrderItem(product: 'Biscoff', quantity: 2, unitPrice: 110),
-        ],
-        fulfillmentType: FulfillmentType.delivery,
-        paymentMode: PaymentMode.gcash,
-        isPaid: false,
-        cogs: 130,
-      ),
-      Order(
-        id: '7',
-        customerName: 'Lili Cruz',
-        deliveryDate: DateTime.now(),
-        items: const [
-          OrderItem(product: 'Biscoff', quantity: 2, unitPrice: 110),
-        ],
-        fulfillmentType: FulfillmentType.meetUp,
         paymentMode: PaymentMode.gcash,
         isPaid: false,
         cogs: 130,

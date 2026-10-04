@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/expense.dart';
 import '../theme/app_theme.dart';
+import '../widgets/app_drawer.dart';
 import '../widgets/app_nav_bar.dart';
 import '../widgets/expense_card.dart';
 import '../widgets/summary_card.dart';
@@ -18,6 +19,7 @@ class ExpensesLogPage extends StatefulWidget {
 }
 
 class _ExpensesLogPageState extends State<ExpensesLogPage> {
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
   List<Expense> _expenses = _mockExpenses();
 
   double _totalFor(String category) => _expenses
@@ -61,7 +63,12 @@ class _ExpensesLogPageState extends State<ExpensesLogPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const UserHeader(name: 'LOUISE JACKSON'),
+      key: _scaffoldKey,
+      drawer: const AppDrawer(),
+      appBar: UserHeader(
+        name: 'LOUISE JACKSON',
+        onMenuTap: () => _scaffoldKey.currentState?.openDrawer(),
+      ),
       backgroundColor: AppColors.background,
       body: Padding(
         padding: const EdgeInsets.all(AppSpacing.lg),
