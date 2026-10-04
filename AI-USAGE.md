@@ -149,3 +149,65 @@ Understanding the actual cause of the Git error helped me safely resolve the pro
 
 **Commit:**  
 YOUR COMMIT LINK — Git merge/file naming fix
+
+### Entry 8 — Device Preview Problem
+
+**Date:** September 2026  
+**Tool:** Claude
+
+**What I asked for:**  
+I asked Claude for help when a Git merge failed because some filenames contained colons, which are invalid in Windows filenames.
+
+**What AI gave me:**  
+Claude explained the cause of the merge problem and suggested ways to resolve the filename issue.
+
+**What I kept and changed:**  
+I used the explanation to identify the problematic filenames and fix the Git merge. I verified the repository afterward instead of assuming the merge was successful.
+
+**Why:**  
+Understanding the actual cause of the Git error helped me safely resolve the problem instead of repeatedly attempting the same merge.
+
+**Commit:**  
+YOUR COMMIT LINK — Git merge/file naming fix
+
+### Entry 9 — Finalized Screen (Still Mockup)
+
+**Date:** September 29 2026  
+**Tool:** Claude
+
+**What I asked for:**  
+I asked Claude for help when a Git merge failed because some filenames contained colons, which are invalid in Windows filenames.
+
+**What AI gave me:**  
+Claude explained the cause of the merge problem and suggested ways to resolve the filename issue.
+
+**What I kept and changed:**  
+I used the explanation to identify the problematic filenames and fix the Git merge. I verified the repository afterward instead of assuming the merge was successful.
+
+**Why:**  
+Understanding the actual cause of the Git error helped me safely resolve the problem instead of repeatedly attempting the same merge.
+
+**Commit:**  
+YOUR COMMIT LINK — Git merge/file naming fix
+
+### Entry 10 — Finalized Screen w/ Supabase
+
+**Date:** October 4 2026  
+**Tool:** Claude
+
+**What I asked for:**  
+I asked Claude for help when a Git merge failed because some filenames contained colons, which are invalid in Windows filenames.
+
+**What AI gave me:**  
+Claude explained the cause of the merge problem and suggested ways to resolve the filename issue.
+
+**What I kept and changed:**  
+I used the explanation to identify the problematic filenames and fix the Git merge. I verified the repository afterward instead of assuming the merge was successful.
+
+**Why:**  
+Understanding the actual cause of the Git error helped me safely resolve the problem instead of repeatedly attempting the same merge.
+
+**Commit:**  
+YOUR COMMIT LINK — Git merge/file naming fix
+
+
