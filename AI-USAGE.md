@@ -147,3 +147,57 @@ I used Claude's step-by-step guidance to understand how each screen should commu
 
 **Commit:**  
 YOUR COMMIT LINK — 
+
+## 2. Where the AI got it wrong
+
+
+### Entry 1 — The AI initially left the Previous Orders and Financial Summary features using mock data
+
+**What the AI gave me:**
+The earlier implementation used hardcoded/mock information for Previous Orders and Financial Summary, including sample orders and fixed financial values.
+
+**What was wrong with it:**
+The screens looked complete, but the information was not coming from the user's actual Supabase data. This meant that adding or changing orders and expenses would not correctly update the Previous Orders or Financial Summary screens.
+
+**What I did instead:**
+I changed Previous Orders to retrieve the user's orders from Supabase and changed Monthly Financial Summary to calculate its information from the orders and expenses stored in Supabase. I also added loading and empty states so the screens could handle database results properly.
+
+**Commit:**
+YOUR COMMIT LINK — Previous Orders and Monthly Financial Summary Supabase integration
+
+
+### Entry 2 — AI's initial code caused an analyzer problem with Order.toMap()
+
+**What the AI gave me:**
+The AI suggested using order.toMap() when inserting and updating orders in Supabase.
+
+**What was wrong with it:**
+At one point, the Dart analyzer reported: "The method 'toMap' isn't defined for the type 'Order'". However, my Order model already contained a toMap() method. The problem was not that the method needed to be duplicated or rewritten. The project had stale/unsaved code and the analyzer was not correctly recognizing the current model.
+
+**What I did instead:**
+I checked the actual Order model instead of blindly changing the code. I confirmed that toMap() was already implemented, saved the files, restarted the Dart analysis server, and rebuilt/analyzed the project. This allowed me to keep the existing toMap() implementation instead of creating unnecessary duplicate code.
+
+**Commit:**
+YOUR COMMIT LINK — Order model/analyzer fix
+
+
+## 3. Who wrote what
+
+**1. Order model and order data structure**
+
+File:
+lib/models/order.dart
+lib/models/expense.dart
+lib/models/product.dart
+
+Commit: YOUR COMMIT LINK — Order model
+
+I wrote the model files for my application. This is basically my data sets and serves as blueprints for the information my app works with.
+
+order.dart — Defines the structure of an order, including the customer, order date, items, fulfillment type, payment method, payment status, COGS, notes, and address. It also contains the functions used to convert order data to and from Supabase.
+expense.dart — Defines the information stored for an expense, such as the expense details and amount, so the expense data can be used by the Expenses screen and Financial Summary.
+product.dart — Defines the structure of the products used by the application, allowing product information to be shared between the product management and ordering features.
+
+I built the models separately so that the data structure is organized and reusable across different screens. This also makes it easier to connect the Flutter application to Supabase because the database data can be converted into Dart objects that the screens can work with.
+
+
