@@ -50,7 +50,7 @@ static TextStyle body() => const TextStyle(
         fontFamily: uiFontFamily,
         fontSize: 12, // labelSmall
         fontWeight: FontWeight.normal,
-        color: AppColors.onSurface.withOpacity(0.7),
+        color: AppColors.onSurface.withValues(alpha: 0.7),
       );
 }
 

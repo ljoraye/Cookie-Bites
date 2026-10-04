@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import '../main.dart';
 import '../theme/app_theme.dart';
 import '../widgets/app_text_field.dart';
 
@@ -29,20 +31,37 @@ class _SettingsPageState extends State<SettingsPage> {
 
     setState(() => _isSaving = true);
 
-    // TODO: replace with a real Supabase call once auth is wired in:
-    // await Supabase.instance.client.auth.updateUser(
-    //   UserAttributes(password: _newPasswordController.text),
-    // );
-    await Future.delayed(const Duration(milliseconds: 600));
+    try {
+      // Note: this updates the password for the current active session.
+      // Supabase's default updateUser() does not re-verify the "current
+      // password" field server-side — that field is here for the user's
+      // own confirmation, not as a security check. For a stronger flow,
+      // Supabase supports re-authentication before sensitive changes; ask
+      // if you want that wired in.
+      await supabase.auth.updateUser(
+        UserAttributes(password: _newPasswordController.text),
+      );
 
-    if (!mounted) return;
-    setState(() => _isSaving = false);
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Password updated')),
-    );
-    _currentPasswordController.clear();
-    _newPasswordController.clear();
-    _confirmPasswordController.clear();
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Password updated')),
+      );
+      _currentPasswordController.clear();
+      _newPasswordController.clear();
+      _confirmPasswordController.clear();
+    } on AuthException catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.message)),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to update password: $e')),
+      );
+    } finally {
+      if (mounted) setState(() => _isSaving = false);
+    }
   }
 
   @override

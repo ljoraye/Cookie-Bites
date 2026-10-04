@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import '../main.dart';
+import '../models/product.dart';
 import '../theme/app_theme.dart';
 import '../widgets/app_text_field.dart';
 import '../widgets/primary_button.dart';
@@ -30,19 +33,39 @@ class _LoginPageState extends State<LoginPage> {
 
     setState(() => _isLoading = true);
 
-    // TODO: swap this stub for real Supabase auth once your project is set up:
-    // final response = await Supabase.instance.client.auth.signInWithPassword(
-    //   email: _emailController.text.trim(),
-    //   password: _passwordController.text,
-    // );
-    await Future.delayed(const Duration(milliseconds: 600));
+    try {
+      await supabase.auth.signInWithPassword(
+        email: _emailController.text.trim(),
+        password: _passwordController.text,
+      );
 
-    if (!mounted) return;
-    setState(() => _isLoading = false);
+      // Load this user's products before entering the app, so the Order
+      // Entry Form's catalog is ready the moment Order Board appears. If
+      // this fails (e.g. no products table rows yet), don't block login
+      // over it — just start with an empty catalog.
+      try {
+        await ProductCatalog.loadFromSupabase();
+      } catch (_) {
+        // Non-fatal — Manage Products screen can still add the first ones.
+      }
 
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(builder: (_) => const OrderBoardPage()),
-    );
+      if (!mounted) return;
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (_) => const OrderBoardPage()),
+      );
+    } on AuthException catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.message)),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Something went wrong: $e')),
+      );
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
   }
 
   @override
@@ -59,18 +82,18 @@ class _LoginPageState extends State<LoginPage> {
                 const SizedBox(height: 48),
                 Image.asset(
                   'assets/images/cookie_bites_logo.png',
-                  width: MediaQuery.of(context).size.width * 0.80,
+                  width: 260,
                   fit: BoxFit.contain,
                 ),
                 const SizedBox(height: 32),
                 const Text(
-                  'READY TO SELL?',
+                  'LOGIN',
                   style: TextStyle(
                     fontFamily: AppTextStyles.logoFontFamily,
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
                     letterSpacing: 2,
-                    fontSize: 30,
+                    fontSize: 16,
                   ),
                 ),
                 const SizedBox(height: 20),
@@ -78,7 +101,8 @@ class _LoginPageState extends State<LoginPage> {
                   controller: _emailController,
                   hintText: 'Email',
                   keyboardType: TextInputType.emailAddress,
-                  prefixIcon: const Icon(Icons.email_outlined, size: 20, color: Color(0xFFBDBDBD)),
+                  prefixIcon: const Icon(Icons.email_outlined,
+                      size: 20, color: Color(0xFFBDBDBD)),
                   validator: (value) {
                     if (value == null || value.trim().isEmpty) {
                       return 'Enter your email';
@@ -92,7 +116,8 @@ class _LoginPageState extends State<LoginPage> {
                   controller: _passwordController,
                   hintText: 'Password',
                   obscureText: _obscurePassword,
-                  prefixIcon: const Icon(Icons.lock_outline, size: 20, color: Color(0xFFBDBDBD)),
+                  prefixIcon: const Icon(Icons.lock_outline,
+                      size: 20, color: Color(0xFFBDBDBD)),
                   suffixIcon: IconButton(
                     icon: Icon(
                       _obscurePassword
@@ -134,23 +159,23 @@ class _LoginPageState extends State<LoginPage> {
                 Row(
                   children: [
                     Expanded(
-                        child: Divider(color: Colors.white.withOpacity(0.4))),
+                        child: Divider(color: Colors.white.withValues(alpha: 0.4))),
                     const Padding(
                       padding: EdgeInsets.symmetric(horizontal: 8),
                       child:
                           Text('or', style: TextStyle(color: Colors.white70)),
                     ),
                     Expanded(
-                        child: Divider(color: Colors.white.withOpacity(0.4))),
+                        child: Divider(color: Colors.white.withValues(alpha: 0.4))),
                   ],
                 ),
                 const SizedBox(height: 24),
                 _OAuthButton(
                   icon: Image.asset(
                     'assets/images/google_logo.png',
-                    height: 27,
-                    width: 27,
-                  ),// swap for a proper Google asset
+                    height: 20,
+                    width: 20,
+                  ),
                   label: 'Continue with Google',
                   backgroundColor: const Color(0xFFD8F26D),
                   textColor: Colors.black87,
@@ -162,9 +187,9 @@ class _LoginPageState extends State<LoginPage> {
                 _OAuthButton(
                   icon: Image.asset(
                     'assets/images/apple_logo.png',
-                    height: 27,
-                    width: 27,
-                  ),// swap for a proper Apple asset
+                    height: 20,
+                    width: 20,
+                  ),
                   label: 'Continue with Apple',
                   backgroundColor: Colors.white,
                   textColor: Colors.black87,

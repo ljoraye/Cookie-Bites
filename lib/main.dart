@@ -1,17 +1,24 @@
 import 'package:device_preview/device_preview.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+
 import 'theme/app_theme.dart';
 import 'screens/login_page.dart';
 
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
 
-// TODO: once you've done your Supabase spike, initialize it here before
-// runApp(), e.g.:
-// await Supabase.initialize(
-//   url: const String.fromEnvironment('SUPABASE_URL'),
-//   anonKey: const String.fromEnvironment('SUPABASE_ANON_KEY'),
-// );
+  // Loads SUPABASE_URL / SUPABASE_ANON_KEY from .env for local runs. .env is
+  // git-ignored, so a deployed build needs these passed a different way
+  // instead (e.g. writing a .env from repository secrets as a build step).
+  await dotenv.load(fileName: '.env');
 
-void main() {
+  await Supabase.initialize(
+    url: dotenv.env['NEXT_PUBLIC_SUPABASE_URL']!,
+    anonKey: dotenv.env['NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY']!,
+  );
+
   runApp(
     DevicePreview(
       enabled: true,
@@ -28,13 +35,14 @@ class CookieBitesApp extends StatelessWidget {
     return MaterialApp(
       title: 'Cookie Bites',
       debugShowCheckedModeBanner: false,
-
-      // These two lines make the DevicePreview toolbar actually change the app.
       locale: DevicePreview.locale(context),
       builder: DevicePreview.appBuilder,
-
       theme: buildAppTheme(),
       home: const LoginPage(),
     );
   }
 }
+
+/// Convenience accessor used throughout the app's screens instead of typing
+/// Supabase.instance.client everywhere.
+final supabase = Supabase.instance.client;

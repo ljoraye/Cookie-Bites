@@ -24,7 +24,7 @@ class OrderCard extends StatelessWidget {
         border: Border.all(color: AppColors.primary, width: 1),
         boxShadow: [
           BoxShadow(
-            color: AppColors.primary.withOpacity(0.15),
+            color: AppColors.primary.withValues(alpha: 0.15),
             blurRadius: 8,
             offset: const Offset(0, 3),
           ),
@@ -66,7 +66,7 @@ class OrderCard extends StatelessWidget {
                       Text(
                         order.itemsSummary,
                         style: TextStyle(
-                          color: AppColors.onSurface.withOpacity(0.7),
+                          color: AppColors.onSurface.withValues(alpha: 0.7),
                           fontSize: 13,
                         ),
                       ),
@@ -74,7 +74,7 @@ class OrderCard extends StatelessWidget {
                       Text(
                         'For ${order.fulfillmentType.label}',
                         style: TextStyle(
-                          color: AppColors.onSurface.withOpacity(0.5),
+                          color: AppColors.onSurface.withValues(alpha: 0.5),
                           fontSize: 12,
                         ),
                       ),
@@ -84,7 +84,7 @@ class OrderCard extends StatelessWidget {
                         Text(
                           order.address!,
                           style: TextStyle(
-                            color: AppColors.onSurface.withOpacity(0.5),
+                            color: AppColors.onSurface.withValues(alpha: 0.5),
                             fontSize: 11,
                           ),
                           overflow: TextOverflow.ellipsis,

@@ -30,7 +30,7 @@ class SummaryCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(14),
         border: isFilled
             ? null
-            : Border.all(color: AppColors.primary.withOpacity(0.4)),
+            : Border.all(color: AppColors.primary.withValues(alpha: 0.4)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -52,7 +52,7 @@ class SummaryCard extends StatelessWidget {
                 child: Text(
                   title,
                   style: TextStyle(
-                    color: resolvedTextColor.withOpacity(0.8),
+                    color: resolvedTextColor.withValues(alpha: 0.8),
                     fontSize: 11,
                     fontWeight: FontWeight.w600,
                   ),

@@ -12,6 +12,20 @@ class OrderItem {
   double get lineTotal => quantity * unitPrice;
 
   String get label => '$quantity $product';
+
+  Map<String, dynamic> toMap() => {
+        'product': product,
+        'quantity': quantity,
+        'unit_price': unitPrice,
+      };
+
+  factory OrderItem.fromMap(Map<String, dynamic> map) {
+    return OrderItem(
+      product: map['product'] as String,
+      quantity: map['quantity'] as int,
+      unitPrice: (map['unit_price'] as num).toDouble(),
+    );
+  }
 }
 
 enum FulfillmentType { pickUp, delivery, meetUp }
@@ -54,9 +68,6 @@ class Order {
   final bool isPaid;
   final double cogs;
   final String? note;
-
-  /// Delivery or meet-up address. Only meaningful when fulfillmentType is
-  /// delivery or meetUp — null/empty for pick-up orders.
   final String? address;
 
   const Order({
@@ -78,9 +89,6 @@ class Order {
 
   String get itemsSummary => items.map((i) => i.label).join(' | ');
 
-  /// Returns a copy of this order with the given fields replaced. Used for
-  /// local, in-memory updates (like toggling paid status) before this is
-  /// backed by a real database.
   Order copyWith({
     String? id,
     String? customerName,
@@ -107,13 +115,36 @@ class Order {
     );
   }
 
+  /// Converts this order to a map ready for Supabase insert/update.
+  /// Deliberately omits `id` and `user_id` — the caller adds `user_id` (it
+  /// knows the current session), and `id` is server-generated on insert /
+  /// already known on update (used in `.eq('id', ...)` instead).
+  Map<String, dynamic> toMap() {
+    return {
+      'customer_name': customerName,
+      'items': items.map((i) => i.toMap()).toList(),
+      'fulfillment_type': fulfillmentType.label,
+      'payment_mode': paymentMode.label,
+      'payment_status': isPaid ? 'Paid' : 'Not yet paid',
+      'total_price': total,
+      'cogs': cogs,
+      'order_date': deliveryDate.toIso8601String(),
+      'adjustment_note': note,
+      'address': address,
+    };
+  }
+
   /// Maps a row from your Supabase `orders` table to an [Order].
   factory Order.fromMap(Map<String, dynamic> map) {
+    final rawItems = (map['items'] as List<dynamic>? ?? [])
+        .map((e) => OrderItem.fromMap(e as Map<String, dynamic>))
+        .toList();
+
     return Order(
       id: map['id'] as String,
       customerName: map['customer_name'] as String,
       deliveryDate: DateTime.parse(map['order_date'] as String),
-      items: const [], // TODO: decide how line items are stored, then parse them here
+      items: rawItems,
       fulfillmentType: FulfillmentType.values.firstWhere(
         (f) => f.label == map['fulfillment_type'],
         orElse: () => FulfillmentType.pickUp,

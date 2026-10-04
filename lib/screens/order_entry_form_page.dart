@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
+import '../main.dart';
 import '../models/order.dart';
 import '../models/product.dart';
 import '../theme/app_theme.dart';
+import '../widgets/app_drawer.dart';
 import '../widgets/app_nav_bar.dart';
 import '../widgets/app_text_field.dart';
 import '../widgets/category_chips.dart';
 import '../widgets/quantity_selector.dart';
-import '../widgets/app_drawer.dart';
 import '../widgets/user_header.dart';
 import 'expenses_log_page.dart';
 import 'financial_summary_page.dart';
@@ -32,9 +33,8 @@ class _OrderEntryFormPageState extends State<OrderEntryFormPage> {
 
   String _fulfillment = 'Pick-up';
   String _paymentMode = 'Cash';
+  bool _isSaving = false;
 
-  /// Quantities keyed by Product.id, so renaming a product never breaks the
-  /// mapping (unlike keying by name).
   final Map<String, int> _quantities = {
     for (final product in ProductCatalog.items) product.id: 0,
   };
@@ -53,9 +53,8 @@ class _OrderEntryFormPageState extends State<OrderEntryFormPage> {
       _noteController.text = order.note ?? '';
       _addressController.text = order.address ?? '';
       for (final item in order.items) {
-        final match = ProductCatalog.items
-            .where((p) => p.name == item.product)
-            .toList();
+        final match =
+            ProductCatalog.items.where((p) => p.name == item.product);
         if (match.isNotEmpty) {
           _quantities[match.first.id] = item.quantity;
         }
@@ -74,6 +73,17 @@ class _OrderEntryFormPageState extends State<OrderEntryFormPage> {
 
   String _formatDate(DateTime date) =>
       '${date.month}/${date.day}/${date.year}';
+
+  DateTime? _parsedDate() {
+    final text = _dateController.text.trim();
+    final parts = text.split('/');
+    if (parts.length != 3) return null;
+    final month = int.tryParse(parts[0]);
+    final day = int.tryParse(parts[1]);
+    final year = int.tryParse(parts[2]);
+    if (month == null || day == null || year == null) return null;
+    return DateTime(year, month, day);
+  }
 
   double get _total {
     var sum = 0.0;
@@ -105,7 +115,7 @@ class _OrderEntryFormPageState extends State<OrderEntryFormPage> {
     }
   }
 
-  void _saveOrder() {
+  Future<void> _saveOrder() async {
     if (_customerController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Enter a customer name')),
@@ -129,15 +139,59 @@ class _OrderEntryFormPageState extends State<OrderEntryFormPage> {
       return;
     }
 
-    // TODO: replace with a real Supabase insert/update once your table is
-    // live, e.g.:
-    // await Supabase.instance.client.from('orders').insert({...});
+    setState(() => _isSaving = true);
 
-    Navigator.of(context).pop();
+    final items = <OrderItem>[
+      for (final product in ProductCatalog.items)
+        if ((_quantities[product.id] ?? 0) > 0)
+          OrderItem(
+            product: product.name,
+            quantity: _quantities[product.id]!,
+            unitPrice: product.sellingPrice,
+          ),
+    ];
+
+    final order = Order(
+      id: widget.existingOrder?.id ?? '',
+      customerName: _customerController.text.trim(),
+      deliveryDate: _parsedDate() ?? DateTime.now(),
+      items: items,
+      fulfillmentType:
+          FulfillmentType.values.firstWhere((f) => f.label == _fulfillment),
+      paymentMode:
+          PaymentMode.values.firstWhere((p) => p.label == _paymentMode),
+      isPaid: widget.existingOrder?.isPaid ?? false,
+      cogs: _cogs,
+      note: _noteController.text.trim(),
+      address: _needsAddress ? _addressController.text.trim() : null,
+    );
+
+    try {
+      if (widget.existingOrder == null) {
+        await supabase.from('orders').insert({
+          ...order.toMap(),
+          'user_id': supabase.auth.currentUser!.id,
+        });
+      } else {
+        await supabase
+            .from('orders')
+            .update(order.toMap())
+            .eq('id', widget.existingOrder!.id);
+      }
+
+      if (!mounted) return;
+      Navigator.of(context).pop(true); // true tells Order Board to refresh
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => _isSaving = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to save order: $e')),
+      );
+    }
   }
 
   void _navigateToTab(int index) {
-    if (index == 1) return; // already on this tab
+    if (index == 1) return;
     late final Widget page;
     switch (index) {
       case 0:
@@ -206,8 +260,6 @@ class _OrderEntryFormPageState extends State<OrderEntryFormPage> {
               selected: _fulfillment,
               onSelected: (value) => setState(() => _fulfillment = value),
             ),
-            // Address field only appears for Delivery or Meet-up — hidden
-            // entirely for Pick-up since there's nothing to deliver to.
             if (_needsAddress) ...[
               const SizedBox(height: AppSpacing.sm),
               AppTextField(
@@ -225,7 +277,7 @@ class _OrderEntryFormPageState extends State<OrderEntryFormPage> {
               decoration: BoxDecoration(
                 color: AppColors.surface,
                 borderRadius: BorderRadius.circular(14),
-                border: Border.all(color: AppColors.primary.withOpacity(0.4)),
+                border: Border.all(color: AppColors.primary.withValues(alpha: 0.4)),
               ),
               child: Column(
                 children: [
@@ -245,7 +297,7 @@ class _OrderEntryFormPageState extends State<OrderEntryFormPage> {
                           Text(
                             product.sellingPrice.toStringAsFixed(2),
                             style: TextStyle(
-                              color: AppColors.onSurface.withOpacity(0.6),
+                              color: AppColors.onSurface.withValues(alpha: 0.6),
                             ),
                           ),
                           const SizedBox(width: 12),
@@ -296,7 +348,7 @@ class _OrderEntryFormPageState extends State<OrderEntryFormPage> {
               width: double.infinity,
               height: 52,
               child: ElevatedButton(
-                onPressed: _saveOrder,
+                onPressed: _isSaving ? null : _saveOrder,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.primary,
                   foregroundColor: Colors.white,
@@ -304,13 +356,22 @@ class _OrderEntryFormPageState extends State<OrderEntryFormPage> {
                     borderRadius: BorderRadius.circular(28),
                   ),
                 ),
-                child: Text(
-                  isEditing ? 'Update Order' : 'Add Order',
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                  ),
-                ),
+                child: _isSaving
+                    ? const SizedBox(
+                        width: 22,
+                        height: 22,
+                        child: CircularProgressIndicator(
+                          color: Colors.white,
+                          strokeWidth: 2.5,
+                        ),
+                      )
+                    : Text(
+                        isEditing ? 'Update Order' : 'Add Order',
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
               ),
             ),
             const SizedBox(height: AppSpacing.lg),
@@ -344,7 +405,7 @@ class _SummaryRow extends StatelessWidget {
             label,
             style: TextStyle(
               fontWeight: bold ? FontWeight.bold : FontWeight.w500,
-              color: AppColors.onSurface.withOpacity(bold ? 1 : 0.7),
+              color: AppColors.onSurface.withValues(alpha: bold ? 1 : 0.7),
             ),
           ),
           Text(

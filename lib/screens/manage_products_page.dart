@@ -15,6 +15,7 @@ class _ManageProductsPageState extends State<ManageProductsPage> {
   final _nameController = TextEditingController();
   final _sellingPriceController = TextEditingController();
   final _costController = TextEditingController();
+  bool _isSaving = false;
 
   @override
   void dispose() {
@@ -24,30 +25,46 @@ class _ManageProductsPageState extends State<ManageProductsPage> {
     super.dispose();
   }
 
-  void _addProduct() {
+  Future<void> _addProduct() async {
     if (!_formKey.currentState!.validate()) return;
 
+    setState(() => _isSaving = true);
+
     final product = Product(
-      id: DateTime.now().millisecondsSinceEpoch.toString(),
+      id: '', // server-generated; ignored by ProductCatalog.add
       name: _nameController.text.trim(),
       sellingPrice: double.tryParse(_sellingPriceController.text) ?? 0,
       costOfGoods: double.tryParse(_costController.text) ?? 0,
     );
 
-    // TODO: replace with a real Supabase insert once you have a `products`
-    // table; for now this list lives in memory only (see
-    // lib/models/product.dart's ProductCatalog), shared with the Order
-    // Entry Form.
-    setState(() {
-      ProductCatalog.add(product);
-      _nameController.clear();
-      _sellingPriceController.clear();
-      _costController.clear();
-    });
+    try {
+      await ProductCatalog.add(product);
+      if (!mounted) return;
+      setState(() {
+        _nameController.clear();
+        _sellingPriceController.clear();
+        _costController.clear();
+      });
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to add product: $e')),
+      );
+    } finally {
+      if (mounted) setState(() => _isSaving = false);
+    }
   }
 
-  void _removeProduct(String id) {
-    setState(() => ProductCatalog.remove(id));
+  Future<void> _removeProduct(String id) async {
+    try {
+      await ProductCatalog.remove(id);
+      if (mounted) setState(() {});
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to remove product: $e')),
+      );
+    }
   }
 
   @override
@@ -70,52 +87,56 @@ class _ManageProductsPageState extends State<ManageProductsPage> {
             ),
             const SizedBox(height: AppSpacing.sm),
             Expanded(
-              child: ListView.separated(
-                itemCount: ProductCatalog.items.length,
-                separatorBuilder: (_, __) => const SizedBox(height: 8),
-                itemBuilder: (context, index) {
-                  final product = ProductCatalog.items[index];
-                  return Container(
-                    padding: const EdgeInsets.all(AppSpacing.md),
-                    decoration: BoxDecoration(
-                      color: AppColors.surface,
-                      borderRadius: BorderRadius.circular(14),
-                      border: Border.all(
-                          color: AppColors.primary.withOpacity(0.4)),
-                    ),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+              child: ProductCatalog.items.isEmpty
+                  ? const Center(child: Text('No products yet'))
+                  : ListView.separated(
+                      itemCount: ProductCatalog.items.length,
+                      separatorBuilder: (_, _) => const SizedBox(height: 8),
+                      itemBuilder: (context, index) {
+                        final product = ProductCatalog.items[index];
+                        return Container(
+                          padding: const EdgeInsets.all(AppSpacing.md),
+                          decoration: BoxDecoration(
+                            color: AppColors.surface,
+                            borderRadius: BorderRadius.circular(14),
+                            border: Border.all(
+                                color: AppColors.primary.withValues(alpha: 0.4)),
+                          ),
+                          child: Row(
                             children: [
-                              Text(
-                                product.name,
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.bold),
-                              ),
-                              Text(
-                                'Sells for ₱${product.sellingPrice.toStringAsFixed(2)} · '
-                                'Cost ₱${product.costOfGoods.toStringAsFixed(2)} · '
-                                'Profit ₱${product.profitPerUnit.toStringAsFixed(2)}/unit',
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  color: AppColors.onSurface.withOpacity(0.6),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      product.name,
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    Text(
+                                      'Sells for ₱${product.sellingPrice.toStringAsFixed(2)} · '
+                                      'Cost ₱${product.costOfGoods.toStringAsFixed(2)} · '
+                                      'Profit ₱${product.profitPerUnit.toStringAsFixed(2)}/unit',
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        color: AppColors.onSurface
+                                            .withValues(alpha: 0.6),
+                                      ),
+                                    ),
+                                  ],
                                 ),
+                              ),
+                              IconButton(
+                                onPressed: () => _removeProduct(product.id),
+                                icon: const Icon(Icons.delete_outline,
+                                    color: Colors.redAccent),
                               ),
                             ],
                           ),
-                        ),
-                        IconButton(
-                          onPressed: () => _removeProduct(product.id),
-                          icon: const Icon(Icons.delete_outline,
-                              color: Colors.redAccent),
-                        ),
-                      ],
+                        );
+                      },
                     ),
-                  );
-                },
-              ),
             ),
             const Divider(height: 32),
             const Text(
@@ -164,7 +185,7 @@ class _ManageProductsPageState extends State<ManageProductsPage> {
                     width: double.infinity,
                     height: 48,
                     child: ElevatedButton(
-                      onPressed: _addProduct,
+                      onPressed: _isSaving ? null : _addProduct,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.primary,
                         foregroundColor: Colors.white,
@@ -172,10 +193,19 @@ class _ManageProductsPageState extends State<ManageProductsPage> {
                           borderRadius: BorderRadius.circular(24),
                         ),
                       ),
-                      child: const Text(
-                        'Add Product',
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
+                      child: _isSaving
+                          ? const SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                                strokeWidth: 2.5,
+                              ),
+                            )
+                          : const Text(
+                              'Add Product',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
                     ),
                   ),
                 ],

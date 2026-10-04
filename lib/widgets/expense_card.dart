@@ -32,7 +32,7 @@ class ExpenseCard extends StatelessWidget {
         border: Border.all(color: AppColors.primary, width: 1),
         boxShadow: [
           BoxShadow(
-            color: AppColors.primary.withOpacity(0.15),
+            color: AppColors.primary.withValues(alpha: 0.15),
             blurRadius: 8,
             offset: const Offset(0, 3),
           ),
@@ -87,7 +87,7 @@ class ExpenseCard extends StatelessWidget {
                             ? _formattedDate
                             : '${expense.description} · $_formattedDate',
                         style: TextStyle(
-                          color: AppColors.onSurface.withOpacity(0.6),
+                          color: AppColors.onSurface.withValues(alpha: 0.6),
                           fontSize: 12,
                         ),
                       ),

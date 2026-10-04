@@ -15,7 +15,14 @@ class Expense {
     required this.amount,
   });
 
-  /// Maps a row from your Supabase `expenses` table to an [Expense].
+  Map<String, dynamic> toMap() => {
+        'expense_name': name,
+        'description': description,
+        'category': category,
+        'amount': amount,
+        'date': date.toIso8601String(),
+      };
+
   factory Expense.fromMap(Map<String, dynamic> map) {
     return Expense(
       id: map['id'] as String,

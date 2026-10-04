@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../main.dart';
 import '../models/order.dart';
 import '../theme/app_theme.dart';
 import '../widgets/app_drawer.dart';
@@ -48,20 +49,28 @@ class _OrderBoardPageState extends State<OrderBoardPage> {
   Future<void> _loadOrders() async {
     setState(() => _isLoading = true);
 
-    // TODO: replace with a real Supabase query once your table is live, e.g.:
-    // final rows = await Supabase.instance.client
-    //     .from('orders')
-    //     .select()
-    //     .order('order_date', ascending: false);
-    // final orders = rows.map((row) => Order.fromMap(row)).toList();
-    await Future.delayed(const Duration(milliseconds: 400));
-    final orders = _mockOrders();
+    try {
+      final rows = await supabase
+          .from('orders')
+          .select()
+          .order('order_date', ascending: false);
 
-    if (!mounted) return;
-    setState(() {
-      _orders = orders;
-      _isLoading = false;
-    });
+      final orders = (rows as List)
+          .map((row) => Order.fromMap(row as Map<String, dynamic>))
+          .toList();
+
+      if (!mounted) return;
+      setState(() {
+        _orders = orders;
+        _isLoading = false;
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => _isLoading = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to load orders: $e')),
+      );
+    }
   }
 
   List<Order> get _filteredOrders {
@@ -76,19 +85,40 @@ class _OrderBoardPageState extends State<OrderBoardPage> {
     }).toList();
   }
 
-  void _togglePaid(Order order) {
-    // TODO: replace with a real Supabase update once your table is live,
-    // e.g.: await Supabase.instance.client.from('orders')
-    //   .update({'payment_status': newStatus}).eq('id', order.id);
-    setState(() {
-      _orders = _orders
-          .map((o) => o.id == order.id ? o.copyWith(isPaid: !o.isPaid) : o)
-          .toList();
-    });
+  Future<void> _togglePaid(Order order) async {
+    final newIsPaid = !order.isPaid;
+
+    try {
+      await supabase
+          .from('orders')
+          .update({'payment_status': newIsPaid ? 'Paid' : 'Not yet paid'})
+          .eq('id', order.id);
+
+      if (!mounted) return;
+      setState(() {
+        _orders = _orders
+            .map((o) => o.id == order.id ? o.copyWith(isPaid: newIsPaid) : o)
+            .toList();
+      });
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to update payment status: $e')),
+      );
+    }
+  }
+
+  Future<void> _openOrderEntryForm({Order? existingOrder}) async {
+    final saved = await Navigator.of(context).push<bool>(
+      MaterialPageRoute(
+        builder: (_) => OrderEntryFormPage(existingOrder: existingOrder),
+      ),
+    );
+    if (saved == true) _loadOrders();
   }
 
   void _navigateToTab(int index) {
-    if (index == 0) return; // already on this tab
+    if (index == 0) return;
     late final Widget page;
     switch (index) {
       case 1:
@@ -115,9 +145,7 @@ class _OrderBoardPageState extends State<OrderBoardPage> {
       appBar: UserHeader(
         name: 'LOUISE JACKSON',
         onMenuTap: () => _scaffoldKey.currentState?.openDrawer(),
-        onProfileTap: () {
-          // TODO: open profile/account settings
-        },
+        onProfileTap: () {},
       ),
       backgroundColor: AppColors.background,
       body: Padding(
@@ -128,20 +156,16 @@ class _OrderBoardPageState extends State<OrderBoardPage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('ORDERS', 
-                style: const TextStyle(
-                fontFamily: AppTextStyles.logoFontFamily,
-                fontSize: 26,
-                fontWeight: FontWeight.bold,
-              ),),
+                Text(
+                  'ORDERS',
+                  style: const TextStyle(
+                    fontFamily: AppTextStyles.logoFontFamily,
+                    fontSize: 26,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
                 ElevatedButton.icon(
-                  onPressed: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (_) => const OrderEntryFormPage(),
-                      ),
-                    );
-                  },
+                  onPressed: () => _openOrderEntryForm(),
                   icon: const Icon(Icons.add, size: 18),
                   label: const Text(
                     'New',
@@ -184,15 +208,8 @@ class _OrderBoardPageState extends State<OrderBoardPage> {
                               return OrderCard(
                                 order: order,
                                 onTogglePaid: () => _togglePaid(order),
-                                onTap: () {
-                                  Navigator.of(context).push(
-                                    MaterialPageRoute(
-                                      builder: (_) => OrderEntryFormPage(
-                                        existingOrder: order,
-                                      ),
-                                    ),
-                                  );
-                                },
+                                onTap: () =>
+                                    _openOrderEntryForm(existingOrder: order),
                               );
                             },
                           ),
@@ -209,50 +226,5 @@ class _OrderBoardPageState extends State<OrderBoardPage> {
         },
       ),
     );
-  }
-
-  // Placeholder data so this screen is usable before Supabase is wired up.
-  List<Order> _mockOrders() {
-    return [
-      Order(
-        id: '1',
-        customerName: 'Loven Victoria',
-        deliveryDate: DateTime.now(),
-        items: const [
-          OrderItem(product: 'Pistachio', quantity: 2, unitPrice: 140),
-          OrderItem(product: 'Matcha', quantity: 1, unitPrice: 110),
-        ],
-        fulfillmentType: FulfillmentType.pickUp,
-        paymentMode: PaymentMode.gcash,
-        isPaid: false,
-        cogs: 200,
-      ),
-      Order(
-        id: '2',
-        customerName: 'Joy Sarmiento',
-        deliveryDate: DateTime.now(),
-        items: const [
-          OrderItem(product: 'Pistachio', quantity: 1, unitPrice: 140),
-          OrderItem(product: 'Biscoff', quantity: 1, unitPrice: 120),
-        ],
-        fulfillmentType: FulfillmentType.delivery,
-        paymentMode: PaymentMode.cash,
-        isPaid: true,
-        cogs: 150,
-        address: '45 Sampaguita St., Angeles City',
-      ),
-      Order(
-        id: '3',
-        customerName: 'Yohan Dy',
-        deliveryDate: DateTime.now(),
-        items: const [
-          OrderItem(product: 'Biscoff', quantity: 2, unitPrice: 110),
-        ],
-        fulfillmentType: FulfillmentType.pickUp,
-        paymentMode: PaymentMode.gcash,
-        isPaid: false,
-        cogs: 130,
-      ),
-    ];
   }
 }

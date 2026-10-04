@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../main.dart';
 import '../models/expense.dart';
 import '../theme/app_theme.dart';
 import '../widgets/app_drawer.dart';
@@ -20,7 +21,40 @@ class ExpensesLogPage extends StatefulWidget {
 
 class _ExpensesLogPageState extends State<ExpensesLogPage> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
-  List<Expense> _expenses = _mockExpenses();
+  bool _isLoading = true;
+  List<Expense> _expenses = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadExpenses();
+  }
+
+  Future<void> _loadExpenses() async {
+    setState(() => _isLoading = true);
+    try {
+      final rows = await supabase
+          .from('expenses')
+          .select()
+          .order('date', ascending: false);
+
+      final expenses = (rows as List)
+          .map((row) => Expense.fromMap(row as Map<String, dynamic>))
+          .toList();
+
+      if (!mounted) return;
+      setState(() {
+        _expenses = expenses;
+        _isLoading = false;
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => _isLoading = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to load expenses: $e')),
+      );
+    }
+  }
 
   double _totalFor(String category) => _expenses
       .where((e) => e.category.toLowerCase() == category.toLowerCase())
@@ -31,13 +65,33 @@ class _ExpensesLogPageState extends State<ExpensesLogPage> {
   Future<void> _openAddExpense() async {
     final expense = await showAddExpenseDialog(context);
     if (expense == null) return;
-    setState(() => _expenses = [expense, ..._expenses]);
+
+    try {
+      await supabase.from('expenses').insert({
+        ...expense.toMap(),
+        'user_id': supabase.auth.currentUser!.id,
+      });
+      _loadExpenses();
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to save expense: $e')),
+      );
+    }
   }
 
-  void _deleteExpense(Expense expense) {
-    // TODO: replace with a real Supabase delete once your table is live.
-    setState(
-        () => _expenses = _expenses.where((e) => e.id != expense.id).toList());
+  Future<void> _deleteExpense(Expense expense) async {
+    try {
+      await supabase.from('expenses').delete().eq('id', expense.id);
+      if (!mounted) return;
+      setState(() =>
+          _expenses = _expenses.where((e) => e.id != expense.id).toList());
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to delete expense: $e')),
+      );
+    }
   }
 
   void _navigateToTab(int index) {
@@ -142,54 +196,28 @@ class _ExpensesLogPageState extends State<ExpensesLogPage> {
             ),
             const SizedBox(height: AppSpacing.md),
             Expanded(
-              child: _expenses.isEmpty
-                  ? const Center(child: Text('No expenses yet'))
-                  : ListView.builder(
-                      itemCount: _expenses.length,
-                      itemBuilder: (context, index) {
-                        final expense = _expenses[index];
-                        return ExpenseCard(
-                          expense: expense,
-                          onDelete: () => _deleteExpense(expense),
-                        );
-                      },
-                    ),
+              child: _isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : _expenses.isEmpty
+                      ? const Center(child: Text('No expenses yet'))
+                      : RefreshIndicator(
+                          onRefresh: _loadExpenses,
+                          child: ListView.builder(
+                            itemCount: _expenses.length,
+                            itemBuilder: (context, index) {
+                              final expense = _expenses[index];
+                              return ExpenseCard(
+                                expense: expense,
+                                onDelete: () => _deleteExpense(expense),
+                              );
+                            },
+                          ),
+                        ),
             ),
           ],
         ),
       ),
       bottomNavigationBar: AppNavBar(currentIndex: 2, onTap: _navigateToTab),
     );
-  }
-
-  // Placeholder data so this screen is usable before Supabase is wired up.
-  static List<Expense> _mockExpenses() {
-    final now = DateTime.now();
-    return [
-      Expense(
-        id: '1',
-        name: 'DCC Container',
-        date: now,
-        description: '1 pack',
-        category: 'Packaging',
-        amount: 200,
-      ),
-      Expense(
-        id: '2',
-        name: 'Promotion',
-        date: now,
-        description: '2 Matcha DCC',
-        category: 'Marketing',
-        amount: 220,
-      ),
-      Expense(
-        id: '3',
-        name: 'Maxim',
-        date: now,
-        description: 'Ingredients',
-        category: 'Delivery',
-        amount: 100,
-      ),
-    ];
   }
 }
