@@ -4,7 +4,7 @@ This document records how I used AI during the development of my Cookie Bites Fl
 
 ## 1. How I Used AI
 
-### Entry 1 — Login and Order Board Screen
+### Entry 1 - Login and Order Board Screen
 
 **Date:** September 22 2026  
 **Tool:** Claude
@@ -24,7 +24,7 @@ The generated code helped me build the basic structure faster, while I still nee
 **Commit:**  
 YOUR COMMIT LINK — 
 
-### Entry 2 — Debugging Flutter Setup and Assets
+### Entry 2 - Debugging Flutter Setup and Assets
 
 **Date:** September 22 2026  
 **Tool:** Claude
@@ -45,7 +45,7 @@ These problems prevented the application from running or displaying assets corre
 YOUR COMMIT LINK — 
 
 
-### Entry 5 — Visual Refinements
+### Entry 3 - Visual Refinements
 
 **Date:** September 23 2026  
 **Tool:** Claude
@@ -66,7 +66,7 @@ I wanted the application to match my own Mockup and Design System rather than si
 YOUR COMMIT LINK — 
 
 
-### Entry 6 — Supabase Database and Security Policies
+### Entry 4 - Supabase Database and Security Policies
 
 **Date:** September 24 2026  
 **Tool:** Claude
@@ -87,7 +87,7 @@ The SQL helped me set up the database faster, but I still needed to understand a
 YOUR COMMIT LINK — 
 
 
-### Entry 4 — Order Entry Form, Expenses Log, and Financial Summary
+### Entry 5 - Order Entry Form, Expenses Log, and Financial Summary
 
 **Date:** September 27 2026  
 **Tool:** Claude
@@ -108,7 +108,7 @@ The AI provided a starting point, but the code still needed to be integrated and
 YOUR COMMIT LINK — 
 
 
-### Entry — Device Preview Compatibility Issue
+### Entry 6 - Device Preview Compatibility Issue
 
 **Date:** September 29, 2026  
 **Tool:** Claude
@@ -128,7 +128,7 @@ The professor's template was the required implementation for this project, so I 
 **Commit:**  
 YOUR COMMIT LINK — 
 
-### Entry 9 — Finalized Screens & Supabase Integration
+### Entry 7 - Finalized Screens & Supabase Integration
 
 **Date:** October 4 2026  
 **Tool:** Claude
@@ -151,7 +151,7 @@ YOUR COMMIT LINK —
 ## 2. Where the AI got it wrong
 
 
-### Entry 1 — The AI initially left the Previous Orders and Financial Summary features using mock data
+### Entry 1 - The AI initially left the Previous Orders and Financial Summary features using mock data
 
 **What the AI gave me:**
 The earlier implementation used hardcoded/mock information for Previous Orders and Financial Summary, including sample orders and fixed financial values.
@@ -166,7 +166,7 @@ I changed Previous Orders to retrieve the user's orders from Supabase and change
 YOUR COMMIT LINK — Previous Orders and Monthly Financial Summary Supabase integration
 
 
-### Entry 2 — AI's initial code caused an analyzer problem with Order.toMap()
+### Entry 2 - AI's initial code caused an analyzer problem with Order.toMap()
 
 **What the AI gave me:**
 The AI suggested using order.toMap() when inserting and updating orders in Supabase.
@@ -185,12 +185,12 @@ YOUR COMMIT LINK — Order model/analyzer fix
 
 **1. Order model and order data structure**
 
-File:
+**File:**
 lib/models/order.dart
 lib/models/expense.dart
 lib/models/product.dart
 
-Commit: YOUR COMMIT LINK — Order model
+**Commit:** YOUR COMMIT LINK — Order model
 
 I wrote the model files for my application. This is basically my data sets and serves as blueprints for the information my app works with.
 
