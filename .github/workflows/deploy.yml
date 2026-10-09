@@ -31,6 +31,14 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
+      - name: Create .env for web build
+        env:
+          SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          SUPABASE_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY }}
+        run: |
+          printf 'NEXT_PUBLIC_SUPABASE_URL=%s\n' "$SUPABASE_URL" > .env
+          printf 'NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=%s\n' "$SUPABASE_PUBLISHABLE_KEY" >> .env
+
       - name: Build Flutter web
         run: flutter build web --release --base-href /Cookie-Bites/
 
