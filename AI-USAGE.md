@@ -22,11 +22,11 @@ I used the generated code as a starting point rather than keeping it unchanged. 
 The generated code helped me build the basic structure faster, while I still needed to adjust it to match my actual design.
 
 **Commit:**  
-YOUR COMMIT LINK — 
+COMMIT LINK — https://github.com/ljoraye/Cookie-Bites/commit/ac5fcf3f038b8fbc92b5594653ac0806d3aba1ba
 
 ### Entry 2 - Debugging Flutter Setup and Assets
 
-**Date:** September 22 2026  
+**Date:** September 23 2026  
 **Tool:** Claude
 
 **What I asked for:**  
@@ -42,12 +42,12 @@ I followed the suggested debugging steps, checked the files myself, and correcte
 These problems prevented the application from running or displaying assets correctly, so I needed to verify the suggested fixes rather than simply copying them.
 
 **Commit:**  
-YOUR COMMIT LINK — 
+COMMIT LINK — https://github.com/ljoraye/Cookie-Bites/commit/a6755caac7742d7e113ee05b61c77941af1224bd
 
 
 ### Entry 3 - Visual Refinements
 
-**Date:** September 23 2026  
+**Date:** September 24 2026  
 **Tool:** Claude
 
 **What I asked for:**  
@@ -63,7 +63,7 @@ I decided which visual changes matched my prototype and applied the suggested co
 I wanted the application to match my own Mockup and Design System rather than simply accepting the AI's default styling.
 
 **Commit:**  
-YOUR COMMIT LINK — 
+COMMIT LINK — https://github.com/ljoraye/Cookie-Bites/commit/6c5562a2ca4078e13863b2017e4ed24baf121b02
 
 
 ### Entry 4 - Supabase Database and Security Policies
@@ -84,7 +84,7 @@ I reviewed the SQL and used it as a starting point for my Supabase database. I c
 The SQL helped me set up the database faster, but I still needed to understand and verify the schema and security behavior before using it.
 
 **Commit:**  
-YOUR COMMIT LINK — 
+COMMIT LINK — I did not commit any changes to my files because I made the changes directly in Supabase and had not yet connected them to my application code.
 
 
 ### Entry 5 - Order Entry Form, Expenses Log, and Financial Summary
@@ -105,7 +105,7 @@ I reviewed and tested the generated screens and modified them to work with my pr
 The AI provided a starting point, but the code still needed to be integrated and adapted to my existing application.
 
 **Commit:**  
-YOUR COMMIT LINK — 
+COMMIT LINK — https://github.com/ljoraye/Cookie-Bites/commit/9e3896d326be78bdce982eaf21cb97e5dcb2986c
 
 
 ### Entry 6 - Device Preview Compatibility Issue
@@ -126,7 +126,7 @@ I did not directly use Claude's suggested solution. Instead, I checked the Devic
 The professor's template was the required implementation for this project, so I decided to follow the provided version rather than changing the code based only on AI's suggestion. Claude was useful for identifying what was failing, but I used the official project instructions as the basis for the final solution.
 
 **Commit:**  
-YOUR COMMIT LINK — 
+COMMIT LINK — https://github.com/ljoraye/Cookie-Bites/commit/ca4af17e97e82cc7ab193c1b29ad2feb04ebe1e2
 
 ### Entry 7 - Finalized Screens & Supabase Integration
 
@@ -146,7 +146,10 @@ I followed Claude's guidance and updated my application to connect the relevant 
 I used Claude's step-by-step guidance to understand how each screen should communicate with Supabase. Adding the final touches to the newly added features helped make the screens more complete and consistent with the rest of the application, while the Supabase integration allowed the main features to work with real database data.
 
 **Commit:**  
-YOUR COMMIT LINK — 
+COMMIT LINK 
+https://github.com/ljoraye/Cookie-Bites/commit/d5b3025a4f5557ee04d8036ef7dd5e1ac804e2aa
+https://github.com/ljoraye/Cookie-Bites/commit/27e598c10662782ea6329e47d0117863cb754ec9
+
 
 ## 2. Where the AI got it wrong
 
@@ -163,7 +166,9 @@ The screens looked complete, but the information was not coming from the user's 
 I changed Previous Orders to retrieve the user's orders from Supabase and changed Monthly Financial Summary to calculate its information from the orders and expenses stored in Supabase. I also added loading and empty states so the screens could handle database results properly.
 
 **Commit:**
-YOUR COMMIT LINK — Previous Orders and Monthly Financial Summary Supabase integration
+COMMIT LINK
+https://github.com/ljoraye/Cookie-Bites/commit/d5b3025a4f5557ee04d8036ef7dd5e1ac804e2aa
+https://github.com/ljoraye/Cookie-Bites/commit/27e598c10662782ea6329e47d0117863cb754ec9
 
 
 ### Entry 2 - AI's initial code caused an analyzer problem with Order.toMap()
@@ -178,7 +183,9 @@ At one point, the Dart analyzer reported: "The method 'toMap' isn't defined for 
 I checked the actual Order model instead of blindly changing the code. I confirmed that toMap() was already implemented, saved the files, restarted the Dart analysis server, and rebuilt/analyzed the project. This allowed me to keep the existing toMap() implementation instead of creating unnecessary duplicate code.
 
 **Commit:**
-YOUR COMMIT LINK — Order model/analyzer fix
+COMMIT LINK 
+https://github.com/ljoraye/Cookie-Bites/commit/d5b3025a4f5557ee04d8036ef7dd5e1ac804e2aa
+https://github.com/ljoraye/Cookie-Bites/commit/27e598c10662782ea6329e47d0117863cb754ec9
 
 
 ## 3. Who wrote what
@@ -190,7 +197,8 @@ lib/models/order.dart
 lib/models/expense.dart
 lib/models/product.dart
 
-**Commit:** YOUR COMMIT LINK — Order model
+**Commit:** 
+COMMIT LINK — https://github.com/ljoraye/Cookie-Bites/commit/ac5fcf3f038b8fbc92b5594653ac0806d3aba1ba
 
 I wrote the model files for my application. This is basically my data sets and serves as blueprints for the information my app works with.
 
@@ -199,5 +207,9 @@ expense.dart — Defines the information stored for an expense, such as the expe
 product.dart — Defines the structure of the products used by the application, allowing product information to be shared between the product management and ordering features.
 
 I built the models separately so that the data structure is organized and reusable across different screens. This also makes it easier to connect the Flutter application to Supabase because the database data can be converted into Dart objects that the screens can work with.
+
+## Note
+I did not commit every change to GitHub immediately. Instead, I usually worked on fixing and improving everything I could first, then committed all the changes together at the end of the day. As a result, multiple changes are included in a single commit link.
+
 
 
