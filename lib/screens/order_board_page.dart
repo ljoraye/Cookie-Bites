@@ -11,6 +11,7 @@ import '../widgets/user_header.dart';
 import 'expenses_log_page.dart';
 import 'financial_summary_page.dart';
 import 'order_entry_form_page.dart';
+import '../widgets/confirm_dialog.dart';
 
 class OrderBoardPage extends StatefulWidget {
   const OrderBoardPage({super.key});
@@ -108,6 +109,61 @@ class _OrderBoardPageState extends State<OrderBoardPage> {
     }
   }
 
+    Future<void> _markChecked(Order order) async {
+    try {
+      await supabase
+          .from('orders')
+          .update({'is_checked': true}).eq('id', order.id);
+
+      if (!mounted) return;
+      setState(
+          () => _orders = _orders.where((o) => o.id != order.id).toList());
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          persist: false,
+          duration: const Duration(seconds: 5),
+          content: const Text('Order checked — moved to Previous Orders'),
+          action: SnackBarAction(
+            label: 'Undo',
+            onPressed: () async {
+              await supabase
+                  .from('orders')
+                  .update({'is_checked': false}).eq('id', order.id);
+              _loadOrders();
+            },
+          ),
+        ),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to check order: $e')),
+      );
+    }
+  }
+
+  Future<void> _deleteOrder(Order order) async {
+    final confirmed = await confirmDelete(
+      context,
+      title: 'Delete order?',
+      message:
+          "This permanently deletes ${order.customerName}'s order and can't be undone.",
+    );
+    if (!confirmed) return;
+
+    try {
+      await supabase.from('orders').delete().eq('id', order.id);
+      if (!mounted) return;
+      setState(
+          () => _orders = _orders.where((o) => o.id != order.id).toList());
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to delete order: $e')),
+      );
+    }
+  }
+
   Future<void> _openOrderEntryForm({Order? existingOrder}) async {
     final saved = await Navigator.of(context).push<bool>(
       MaterialPageRoute(
@@ -118,6 +174,7 @@ class _OrderBoardPageState extends State<OrderBoardPage> {
   }
 
   void _navigateToTab(int index) {
+    ScaffoldMessenger.of(context).hideCurrentSnackBar(); 
     if (index == 0) return;
     late final Widget page;
     switch (index) {
@@ -147,7 +204,7 @@ class _OrderBoardPageState extends State<OrderBoardPage> {
         onMenuTap: () => _scaffoldKey.currentState?.openDrawer(),
         onProfileTap: () {},
       ),
-      backgroundColor: AppColors.background,
+      backgroundColor: Colors.transparent,
       body: Padding(
         padding: const EdgeInsets.all(AppSpacing.lg),
         child: Column(
@@ -208,6 +265,8 @@ class _OrderBoardPageState extends State<OrderBoardPage> {
                               return OrderCard(
                                 order: order,
                                 onTogglePaid: () => _togglePaid(order),
+                                onToggleChecked: () => _markChecked(order),
+                                onDelete: () => _deleteOrder(order),
                                 onTap: () =>
                                     _openOrderEntryForm(existingOrder: order),
                               );

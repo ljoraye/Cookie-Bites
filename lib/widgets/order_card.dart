@@ -6,12 +6,16 @@ class OrderCard extends StatelessWidget {
   final Order order;
   final VoidCallback onTap;
   final VoidCallback? onTogglePaid;
+  final VoidCallback? onToggleChecked;
+  final VoidCallback? onDelete;
 
   const OrderCard({
     super.key,
     required this.order,
     required this.onTap,
     this.onTogglePaid,
+    this.onToggleChecked,
+    this.onDelete,
   });
 
   @override
@@ -24,7 +28,7 @@ class OrderCard extends StatelessWidget {
         border: Border.all(color: AppColors.primary, width: 1),
         boxShadow: [
           BoxShadow(
-            color: AppColors.primary.withValues(alpha: 0.15),
+            color: AppColors.primary.withOpacity(0.15),
             blurRadius: 8,
             offset: const Offset(0, 3),
           ),
@@ -66,7 +70,7 @@ class OrderCard extends StatelessWidget {
                       Text(
                         order.itemsSummary,
                         style: TextStyle(
-                          color: AppColors.onSurface.withValues(alpha: 0.7),
+                          color: AppColors.onSurface.withOpacity(0.7),
                           fontSize: 13,
                         ),
                       ),
@@ -74,7 +78,7 @@ class OrderCard extends StatelessWidget {
                       Text(
                         'For ${order.fulfillmentType.label}',
                         style: TextStyle(
-                          color: AppColors.onSurface.withValues(alpha: 0.5),
+                          color: AppColors.onSurface.withOpacity(0.5),
                           fontSize: 12,
                         ),
                       ),
@@ -84,7 +88,7 @@ class OrderCard extends StatelessWidget {
                         Text(
                           order.address!,
                           style: TextStyle(
-                            color: AppColors.onSurface.withValues(alpha: 0.5),
+                            color: AppColors.onSurface.withOpacity(0.5),
                             fontSize: 11,
                           ),
                           overflow: TextOverflow.ellipsis,
@@ -101,6 +105,47 @@ class OrderCard extends StatelessWidget {
                     Text(
                       order.total.toStringAsFixed(2),
                       style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 6),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        if (onToggleChecked != null)
+                          Tooltip(
+                            message: order.isChecked
+                                ? 'Move back to Orders'
+                                : 'Mark as done',
+                            child: InkWell(
+                              onTap: onToggleChecked,
+                              borderRadius: BorderRadius.circular(20),
+                              child: Padding(
+                                padding: const EdgeInsets.all(2),
+                                child: Icon(
+                                  order.isChecked
+                                      ? Icons.check_circle
+                                      : Icons.check_circle_outline,
+                                  size: 22,
+                                  color: AppColors.primary,
+                                ),
+                              ),
+                            ),
+                          ),
+                        if (onDelete != null) ...[
+                          const SizedBox(width: 6),
+                          Tooltip(
+                            message: 'Delete order',
+                            child: InkWell(
+                              onTap: onDelete,
+                              borderRadius: BorderRadius.circular(20),
+                              child: const Padding(
+                                padding: EdgeInsets.all(2),
+                                child: Icon(Icons.delete_outline,
+                                    size: 22, color: Colors.redAccent),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ],
                     ),
                   ],
                 ),

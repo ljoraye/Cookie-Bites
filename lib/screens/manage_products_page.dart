@@ -75,7 +75,7 @@ class _ManageProductsPageState extends State<ManageProductsPage> {
         foregroundColor: Colors.white,
         title: const Text('Manage Products'),
       ),
-      backgroundColor: AppColors.background,
+      backgroundColor: Colors.transparent,
       body: Padding(
         padding: const EdgeInsets.all(AppSpacing.lg),
         child: Column(

@@ -134,9 +134,9 @@ class _MonthlyFinancialSummaryPageState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: Colors.transparent,
       appBar: AppBar(
-        backgroundColor: AppColors.background,
+        backgroundColor: Colors.transparent,
         elevation: 0,
         iconTheme: IconThemeData(color: AppColors.onSurface),
         title: Text(
@@ -255,7 +255,7 @@ class _MonthlyFinancialSummaryPageState
             label: Text(_shortLabel(_history[i])),
             selected: isSelected,
             selectedColor: AppColors.primary.withValues(alpha: 0.25),
-            backgroundColor: AppColors.surface,
+            backgroundColor: Colors.transparent,
             side: BorderSide(color: AppColors.primary),
             onSelected: (_) => setState(() => _selectedIndex = i),
           );

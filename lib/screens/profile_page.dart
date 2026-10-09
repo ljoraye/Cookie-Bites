@@ -95,7 +95,7 @@ class _ProfilePageState extends State<ProfilePage> {
         foregroundColor: Colors.white,
         title: const Text('Profile'),
       ),
-      backgroundColor: AppColors.background,
+      backgroundColor: Colors.transparent,
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : SingleChildScrollView(

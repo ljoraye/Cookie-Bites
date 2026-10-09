@@ -123,7 +123,7 @@ class _ExpensesLogPageState extends State<ExpensesLogPage> {
         name: 'LOUISE JACKSON',
         onMenuTap: () => _scaffoldKey.currentState?.openDrawer(),
       ),
-      backgroundColor: AppColors.background,
+      backgroundColor: Colors.transparent,
       body: Padding(
         padding: const EdgeInsets.all(AppSpacing.lg),
         child: Column(

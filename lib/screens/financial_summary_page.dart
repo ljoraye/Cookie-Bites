@@ -287,7 +287,7 @@ class _FinancialSummaryPageState extends State<FinancialSummaryPage> {
       return Scaffold(
         key: _scaffoldKey,
         drawer: const AppDrawer(),
-        backgroundColor: AppColors.background,
+      backgroundColor: Colors.transparent,
         appBar: UserHeader(
           name: 'LOUISE JACKSON',
           onMenuTap: () => _scaffoldKey.currentState?.openDrawer(),
@@ -306,7 +306,7 @@ class _FinancialSummaryPageState extends State<FinancialSummaryPage> {
       return Scaffold(
         key: _scaffoldKey,
         drawer: const AppDrawer(),
-        backgroundColor: AppColors.background,
+        backgroundColor: Colors.transparent,
         appBar: UserHeader(
           name: 'LOUISE JACKSON',
           onMenuTap: () => _scaffoldKey.currentState?.openDrawer(),
@@ -363,7 +363,7 @@ class _FinancialSummaryPageState extends State<FinancialSummaryPage> {
         name: 'LOUISE JACKSON',
         onMenuTap: () => _scaffoldKey.currentState?.openDrawer(),
       ),
-      backgroundColor: AppColors.background,
+      backgroundColor: Colors.transparent,
       body: RefreshIndicator(
         onRefresh: _loadSummary,
         child: SingleChildScrollView(

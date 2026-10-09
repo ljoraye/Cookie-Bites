@@ -69,6 +69,7 @@ class Order {
   final double cogs;
   final String? note;
   final String? address;
+  final bool isChecked;
 
   const Order({
     required this.id,
@@ -81,6 +82,7 @@ class Order {
     required this.cogs,
     this.note,
     this.address,
+    this.isChecked = false,
   });
 
   double get total => items.fold(0, (sum, item) => sum + item.lineTotal);
@@ -100,6 +102,7 @@ class Order {
     double? cogs,
     String? note,
     String? address,
+    bool? isChecked,
   }) {
     return Order(
       id: id ?? this.id,
@@ -112,6 +115,7 @@ class Order {
       cogs: cogs ?? this.cogs,
       note: note ?? this.note,
       address: address ?? this.address,
+      isChecked: isChecked ?? this.isChecked,
     );
   }
 
@@ -135,7 +139,7 @@ class Order {
   }
 
   /// Maps a row from your Supabase `orders` table to an [Order].
-  factory Order.fromMap(Map<String, dynamic> map) {
+  factory Order.fromMap(Map<String, dynamic> map ) {
     final rawItems = (map['items'] as List<dynamic>? ?? [])
         .map((e) => OrderItem.fromMap(e as Map<String, dynamic>))
         .toList();
@@ -157,6 +161,7 @@ class Order {
       cogs: (map['cogs'] as num?)?.toDouble() ?? 0,
       note: map['adjustment_note'] as String?,
       address: map['address'] as String?,
+      isChecked: map['is_checked'] as bool? ?? false,
     );
   }
 }

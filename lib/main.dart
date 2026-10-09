@@ -36,7 +36,20 @@ class CookieBitesApp extends StatelessWidget {
       title: 'Cookie Bites',
       debugShowCheckedModeBanner: false,
       locale: DevicePreview.locale(context),
-      builder: DevicePreview.appBuilder,
+      builder: (context, child) {
+        final previewChild = DevicePreview.appBuilder(context, child);
+        return Stack(
+          fit: StackFit.expand,
+          children: [
+            // Fallback color shows if the image is slow to load.
+            const ColoredBox(color: AppColors.background),
+            Image.asset('assets/images/background.png', fit: BoxFit.cover),
+            // Optional soft overlay to keep text readable. Delete this line
+            // if your image is already light.
+            previewChild,
+          ],
+        );
+      },
       theme: buildAppTheme(),
       home: const LoginPage(),
     );

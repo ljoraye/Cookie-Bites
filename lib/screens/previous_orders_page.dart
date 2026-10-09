@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../main.dart';
 import '../models/order.dart';
 import '../theme/app_theme.dart';
+import '../widgets/confirm_dialog.dart';
 import '../widgets/order_card.dart';
 import 'order_entry_form_page.dart';
 
@@ -16,23 +17,8 @@ class PreviousOrdersPage extends StatefulWidget {
 
 class _PreviousOrdersPageState extends State<PreviousOrdersPage> {
   _GroupBy _groupBy = _GroupBy.month;
-  List<Order> _orders = [];
   bool _isLoading = true;
-  String? _error;
-
-  Map<String, List<Order>> get _grouped {
-    final map = <String, List<Order>>{};
-
-    for (final order in _orders) {
-      final key = _groupBy == _GroupBy.month
-          ? _monthLabel(order.deliveryDate)
-          : _dateLabel(order.deliveryDate);
-
-      map.putIfAbsent(key, () => []).add(order);
-    }
-
-    return map;
-  }
+  List<Order> _orders = [];
 
   @override
   void initState() {
@@ -41,104 +27,113 @@ class _PreviousOrdersPageState extends State<PreviousOrdersPage> {
   }
 
   Future<void> _loadOrders() async {
-    setState(() {
-      _isLoading = true;
-      _error = null;
-    });
-
+    setState(() => _isLoading = true);
     try {
-      final userId = supabase.auth.currentUser?.id;
-
-      if (userId == null) {
-        throw Exception('No signed-in user. Please log in again.');
-      }
-
       final rows = await supabase
           .from('orders')
           .select()
-          .eq('user_id', userId)
+          .eq('is_checked', true)
           .order('order_date', ascending: false);
 
-      final orders = rows
-          .map((row) => Order.fromMap(Map<String, dynamic>.from(row)))
+      final orders = (rows as List)
+          .map((row) => Order.fromMap(row as Map<String, dynamic>))
           .toList();
 
       if (!mounted) return;
-
       setState(() {
         _orders = orders;
         _isLoading = false;
       });
     } catch (e) {
       if (!mounted) return;
-
-      setState(() {
-        _isLoading = false;
-        _error = e.toString();
-      });
+      setState(() => _isLoading = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to load previous orders: $e')),
+      );
     }
+  }
+
+  Map<String, List<Order>> get _grouped {
+    final map = <String, List<Order>>{};
+    for (final order in _orders) {
+      final key = _groupBy == _GroupBy.month
+          ? _monthLabel(order.deliveryDate)
+          : _dateLabel(order.deliveryDate);
+      map.putIfAbsent(key, () => []).add(order);
+    }
+    return map;
   }
 
   String _monthLabel(DateTime date) {
     const months = [
-      'January',
-      'February',
-      'March',
-      'April',
-      'May',
-      'June',
-      'July',
-      'August',
-      'September',
-      'October',
-      'November',
-      'December',
+      'January', 'February', 'March', 'April', 'May', 'June',
+      'July', 'August', 'September', 'October', 'November', 'December',
     ];
-
     return '${months[date.month - 1]} ${date.year}';
   }
 
-  String _dateLabel(DateTime date) {
-    return '${date.month}/${date.day}/${date.year}';
-  }
+  String _dateLabel(DateTime date) => '${date.month}/${date.day}/${date.year}';
 
   Future<void> _togglePaid(Order order) async {
-    final userId = supabase.auth.currentUser?.id;
-
-    if (userId == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please log in again.')),
-      );
-      return;
-    }
-
     final newIsPaid = !order.isPaid;
-
     try {
       await supabase
           .from('orders')
-          .update({
-            'payment_status': newIsPaid ? 'Paid' : 'Not yet paid',
-          })
-          .eq('id', order.id)
-          .eq('user_id', userId);
+          .update({'payment_status': newIsPaid ? 'Paid' : 'Not yet paid'})
+          .eq('id', order.id);
 
       if (!mounted) return;
-
       setState(() {
         _orders = _orders
-            .map(
-              (o) => o.id == order.id
-                  ? o.copyWith(isPaid: newIsPaid)
-                  : o,
-            )
+            .map((o) => o.id == order.id ? o.copyWith(isPaid: newIsPaid) : o)
             .toList();
       });
     } catch (e) {
       if (!mounted) return;
-
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Failed to update payment status: $e')),
+      );
+    }
+  }
+
+  Future<void> _moveBackToOrders(Order order) async {
+    try {
+      await supabase
+          .from('orders')
+          .update({'is_checked': false}).eq('id', order.id);
+
+      if (!mounted) return;
+      setState(
+          () => _orders = _orders.where((o) => o.id != order.id).toList());
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Moved back to Orders')),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to move order: $e')),
+      );
+    }
+  }
+
+  Future<void> _deleteOrder(Order order) async {
+    final confirmed = await confirmDelete(
+      context,
+      title: 'Delete order?',
+      message:
+          "This permanently deletes ${order.customerName}'s order and can't be undone.",
+    );
+    if (!confirmed) return;
+
+    try {
+      await supabase.from('orders').delete().eq('id', order.id);
+      if (!mounted) return;
+      setState(
+          () => _orders = _orders.where((o) => o.id != order.id).toList());
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to delete order: $e')),
       );
     }
   }
@@ -149,10 +144,7 @@ class _PreviousOrdersPageState extends State<PreviousOrdersPage> {
         builder: (_) => OrderEntryFormPage(existingOrder: order),
       ),
     );
-
-    if (saved == true) {
-      await _loadOrders();
-    }
+    if (saved == true) _loadOrders();
   }
 
   @override
@@ -166,7 +158,7 @@ class _PreviousOrdersPageState extends State<PreviousOrdersPage> {
         foregroundColor: Colors.white,
         title: const Text('Previous Orders'),
       ),
-      backgroundColor: AppColors.background,
+      backgroundColor: Colors.transparent,
       body: Padding(
         padding: const EdgeInsets.all(AppSpacing.lg),
         child: Column(
@@ -178,9 +170,7 @@ class _PreviousOrdersPageState extends State<PreviousOrdersPage> {
                   child: _ToggleButton(
                     label: 'By Month',
                     selected: _groupBy == _GroupBy.month,
-                    onTap: () => setState(
-                      () => _groupBy = _GroupBy.month,
-                    ),
+                    onTap: () => setState(() => _groupBy = _GroupBy.month),
                   ),
                 ),
                 const SizedBox(width: 8),
@@ -188,109 +178,60 @@ class _PreviousOrdersPageState extends State<PreviousOrdersPage> {
                   child: _ToggleButton(
                     label: 'By Date',
                     selected: _groupBy == _GroupBy.date,
-                    onTap: () => setState(
-                      () => _groupBy = _GroupBy.date,
-                    ),
+                    onTap: () => setState(() => _groupBy = _GroupBy.date),
                   ),
                 ),
               ],
             ),
             const SizedBox(height: AppSpacing.md),
             Expanded(
-              child: _buildContent(sectionKeys, grouped),
+              child: _isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : _orders.isEmpty
+                      ? const Center(
+                          child: Text(
+                            'No checked orders yet.\nCheck an order on the Orders screen to move it here.',
+                            textAlign: TextAlign.center,
+                          ),
+                        )
+                      : RefreshIndicator(
+                          onRefresh: _loadOrders,
+                          child: ListView.builder(
+                            itemCount: sectionKeys.length,
+                            itemBuilder: (context, sectionIndex) {
+                              final key = sectionKeys[sectionIndex];
+                              final orders = grouped[key]!;
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Padding(
+                                    padding:
+                                        const EdgeInsets.symmetric(vertical: 8),
+                                    child: Text(
+                                      key,
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 13,
+                                      ),
+                                    ),
+                                  ),
+                                  for (final order in orders)
+                                    OrderCard(
+                                      order: order,
+                                      onTogglePaid: () => _togglePaid(order),
+                                      onToggleChecked: () =>
+                                          _moveBackToOrders(order),
+                                      onDelete: () => _deleteOrder(order),
+                                      onTap: () => _editOrder(order),
+                                    ),
+                                ],
+                              );
+                            },
+                          ),
+                        ),
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildContent(
-    List<String> sectionKeys,
-    Map<String, List<Order>> grouped,
-  ) {
-    if (_isLoading) {
-      return const Center(
-        child: CircularProgressIndicator(),
-      );
-    }
-
-    if (_error != null) {
-      return Center(
-        child: Padding(
-          padding: const EdgeInsets.all(AppSpacing.md),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Icon(Icons.error_outline, size: 48),
-              const SizedBox(height: AppSpacing.sm),
-              const Text(
-                'Unable to load previous orders.',
-                textAlign: TextAlign.center,
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: AppSpacing.sm),
-              Text(
-                _error!,
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: AppSpacing.md),
-              ElevatedButton(
-                onPressed: _loadOrders,
-                child: const Text('Retry'),
-              ),
-            ],
-          ),
-        ),
-      );
-    }
-
-    if (_orders.isEmpty) {
-      return RefreshIndicator(
-        onRefresh: _loadOrders,
-        child: ListView(
-          physics: const AlwaysScrollableScrollPhysics(),
-          children: const [
-            SizedBox(height: 160),
-            Center(
-              child: Text('No previous orders found.'),
-            ),
-          ],
-        ),
-      );
-    }
-
-    return RefreshIndicator(
-      onRefresh: _loadOrders,
-      child: ListView.builder(
-        physics: const AlwaysScrollableScrollPhysics(),
-        itemCount: sectionKeys.length,
-        itemBuilder: (context, sectionIndex) {
-          final key = sectionKeys[sectionIndex];
-          final orders = grouped[key]!;
-
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8),
-                child: Text(
-                  key,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 13,
-                  ),
-                ),
-              ),
-              for (final order in orders)
-                OrderCard(
-                  order: order,
-                  onTogglePaid: () => _togglePaid(order),
-                  onTap: () => _editOrder(order),
-                ),
-            ],
-          );
-        },
       ),
     );
   }

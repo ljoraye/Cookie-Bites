@@ -87,7 +87,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 const SizedBox(height: 32),
                 const Text(
-                  'LOGIN',
+                  'LET’S MAKE EVERY BITE COUNT!',
                   style: TextStyle(
                     fontFamily: AppTextStyles.logoFontFamily,
                     color: Colors.white,

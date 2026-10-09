@@ -221,7 +221,7 @@ class _OrderEntryFormPageState extends State<OrderEntryFormPage> {
         name: 'LOUISE JACKSON',
         onMenuTap: () => _scaffoldKey.currentState?.openDrawer(),
       ),
-      backgroundColor: AppColors.background,
+      backgroundColor: Colors.transparent,
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(AppSpacing.lg),
         child: Column(

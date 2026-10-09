@@ -72,7 +72,7 @@ class _SettingsPageState extends State<SettingsPage> {
         foregroundColor: Colors.white,
         title: const Text('Settings'),
       ),
-      backgroundColor: AppColors.background,
+      backgroundColor: Colors.transparent,
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(AppSpacing.lg),
         child: Form(
