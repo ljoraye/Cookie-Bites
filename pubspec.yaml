@@ -36,7 +36,7 @@ dependencies:
   cupertino_icons: ^1.0.8
   device_preview: ^1.3.1
   supabase_flutter: ^2.18.0
-  flutter_dotenv: ^6.0.1
+  # flutter_dotenv: ^6.0.1
 
 dev_dependencies:
   flutter_test:
@@ -78,7 +78,7 @@ flutter:
     - assets/images/background.png
     - assets/images/apple_logo.png
     - assets/images/google_logo.png
-    - assets/.env
+    # - assets/.env
   
   fonts:
       - family: DarumadropOne
