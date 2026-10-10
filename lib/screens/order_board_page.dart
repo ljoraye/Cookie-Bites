@@ -76,6 +76,7 @@ class _OrderBoardPageState extends State<OrderBoardPage> {
 
   List<Order> get _filteredOrders {
     return _orders.where((order) {
+      if (order.isChecked) return false;
       final matchesCategory = _selectedCategory == 'All Orders' ||
           order.fulfillmentType.label == _selectedCategory;
       final matchesSearch = _searchQuery.isEmpty ||
