@@ -33,10 +33,16 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
+
       - name: Create .env file
         run: |
-          echo "NEXT_PUBLIC_SUPABASE_URL=${{ secrets.SUPABASE_URL }}" > .env
-          echo "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=${{ secrets.SUPABASE_PUBLISHABLE_KEY }}" >> .env
+          mkdir -p assets
+          echo "SUPABASE_URL=${{ secrets.SUPABASE_URL }}" > assets/.env
+          echo "SUPABASE_PUBLISHABLE_KEY=${{ secrets.SUPABASE_PUBLISHABLE_KEY }}" >> assets/.env
+
+      - name: Build Flutter Web
+        run: flutter build web --release --base-href /Cookie-Bites/
+
 
       - name: Build Flutter Web
         run: flutter build web --release
