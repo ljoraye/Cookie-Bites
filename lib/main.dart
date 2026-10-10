@@ -1,6 +1,5 @@
 import 'package:device_preview/device_preview.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'theme/app_theme.dart';
@@ -9,14 +8,19 @@ import 'screens/login_page.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Loads SUPABASE_URL / SUPABASE_ANON_KEY from .env for local runs. .env is
-  // git-ignored, so a deployed build needs these passed a different way
-  // instead (e.g. writing a .env from repository secrets as a build step).
-  await dotenv.load(fileName: '.env');
+  const supabaseUrl = String.fromEnvironment('SUPABASE_URL');
+  const supabaseAnonKey = String.fromEnvironment('SUPABASE_PUBLISHABLE_KEY');
+
+  if (supabaseUrl.isEmpty || supabaseAnonKey.isEmpty) {
+    throw StateError(
+      'Missing SUPABASE_URL or SUPABASE_PUBLISHABLE_KEY. '
+      'Pass them with --dart-define when building or running.',
+    );
+  }
 
   await Supabase.initialize(
-    url: dotenv.env['NEXT_PUBLIC_SUPABASE_URL']!,
-    anonKey: dotenv.env['NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY']!,
+    url: supabaseUrl,
+    anonKey: supabaseAnonKey,
   );
 
   runApp(
@@ -41,11 +45,8 @@ class CookieBitesApp extends StatelessWidget {
         return Stack(
           fit: StackFit.expand,
           children: [
-            // Fallback color shows if the image is slow to load.
             const ColoredBox(color: AppColors.background),
             Image.asset('assets/images/background.png', fit: BoxFit.cover),
-            // Optional soft overlay to keep text readable. Delete this line
-            // if your image is already light.
             previewChild,
           ],
         );
