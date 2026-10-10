@@ -9,17 +9,17 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   try {
-    const supabaseUrl = String.fromEnvironment('SUPABASE_URL', defaultValue: '');
+    const supabaseUrl = String.fromEnvironment('NEXT_PUBLIC_SUPABASE_URL', defaultValue: '');
     const supabaseAnonKey =
-        String.fromEnvironment('SUPABASE_PUBLISHABLE_KEY', defaultValue: '');
+        String.fromEnvironment('NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY', defaultValue: '');
 
-    print('DEBUG: SUPABASE_URL = $supabaseUrl');
-    print('DEBUG: SUPABASE_PUBLISHABLE_KEY = $supabaseAnonKey');
+    print('DEBUG: NEXT_PUBLIC_SUPABASE_URL = $supabaseUrl');
+    print('DEBUG: NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY = $supabaseAnonKey');
 
     if (supabaseUrl.isEmpty || supabaseAnonKey.isEmpty) {
       throw StateError(
         'Missing Supabase credentials. '
-        'Ensure SUPABASE_URL and SUPABASE_PUBLISHABLE_KEY are set via --dart-define.',
+        'Ensure NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY are set via --dart-define.',
       );
     }
 
