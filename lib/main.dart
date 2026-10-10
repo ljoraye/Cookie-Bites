@@ -8,27 +8,38 @@ import 'screens/login_page.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  const supabaseUrl = String.fromEnvironment('SUPABASE_URL');
-  const supabaseAnonKey = String.fromEnvironment('SUPABASE_PUBLISHABLE_KEY');
+  try {
+    const supabaseUrl = String.fromEnvironment('SUPABASE_URL', defaultValue: '');
+    const supabaseAnonKey =
+        String.fromEnvironment('SUPABASE_PUBLISHABLE_KEY', defaultValue: '');
 
-  if (supabaseUrl.isEmpty || supabaseAnonKey.isEmpty) {
-    throw StateError(
-      'Missing SUPABASE_URL or SUPABASE_PUBLISHABLE_KEY. '
-      'Pass them with --dart-define when building or running.',
+    print('DEBUG: SUPABASE_URL = $supabaseUrl');
+    print('DEBUG: SUPABASE_PUBLISHABLE_KEY = $supabaseAnonKey');
+
+    if (supabaseUrl.isEmpty || supabaseAnonKey.isEmpty) {
+      throw StateError(
+        'Missing Supabase credentials. '
+        'Ensure SUPABASE_URL and SUPABASE_PUBLISHABLE_KEY are set via --dart-define.',
+      );
+    }
+
+    await Supabase.initialize(
+      url: supabaseUrl,
+      anonKey: supabaseAnonKey,
     );
+
+    runApp(
+      DevicePreview(
+        enabled: true,
+        builder: (context) => const CookieBitesApp(),
+      ),
+    );
+  } catch (e, stackTrace) {
+    print('ERROR during initialization: $e');
+    print('StackTrace: $stackTrace');
+    // Show error in app
+    runApp(ErrorApp(error: e.toString()));
   }
-
-  await Supabase.initialize(
-    url: supabaseUrl,
-    anonKey: supabaseAnonKey,
-  );
-
-  runApp(
-    DevicePreview(
-      enabled: true,
-      builder: (context) => const CookieBitesApp(),
-    ),
-  );
 }
 
 class CookieBitesApp extends StatelessWidget {
@@ -53,6 +64,42 @@ class CookieBitesApp extends StatelessWidget {
       },
       theme: buildAppTheme(),
       home: const LoginPage(),
+    );
+  }
+}
+
+class ErrorApp extends StatelessWidget {
+  final String error;
+
+  const ErrorApp({required this.error});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        body: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(Icons.error, size: 64, color: Colors.red),
+                const SizedBox(height: 16),
+                const Text(
+                  'Initialization Error',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  error,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(fontSize: 16, color: Colors.red),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 }
