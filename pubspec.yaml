@@ -82,7 +82,7 @@ flutter:
     - assets/images/background.png
     - assets/images/apple_logo.png
     - assets/images/google_logo.png
-    - .env
+    # - .env
 
   fonts:
       - family: DarumadropOne
