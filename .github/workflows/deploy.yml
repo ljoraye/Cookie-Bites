@@ -34,14 +34,13 @@ jobs:
         run: flutter pub get
 
 
-      - name: Create .env file
-        run: |
-          mkdir -p assets
-          echo "SUPABASE_URL=${{ secrets.SUPABASE_URL }}" > assets/.env
-          echo "SUPABASE_PUBLISHABLE_KEY=${{ secrets.SUPABASE_PUBLISHABLE_KEY }}" >> assets/.env
-
       - name: Build Flutter Web
-        run: flutter build web --release --base-href /Cookie-Bites/
+        run: |
+          flutter build web \
+            --release \
+            --base-href /Cookie-Bites/ \
+            --dart-define=SUPABASE_URL="${{ secrets.SUPABASE_URL }}" \
+            --dart-define=SUPABASE_PUBLISHABLE_KEY="${{ secrets.SUPABASE_PUBLISHABLE_KEY }}"
 
       - name: Add nojekyll file
         run: touch build/web/.nojekyll
