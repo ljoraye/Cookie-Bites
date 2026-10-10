@@ -43,10 +43,6 @@ jobs:
       - name: Build Flutter Web
         run: flutter build web --release --base-href /Cookie-Bites/
 
-
-      - name: Build Flutter Web
-        run: flutter build web --release
-
       - name: Add nojekyll file
         run: touch build/web/.nojekyll
 
