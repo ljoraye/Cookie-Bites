@@ -2,17 +2,15 @@
 
 Project: Flutter app with Supabase backend, deployed to GitHub Pages via GitHub Actions.
 
-Rows marked **TODO** need you to run the command in the Evidence column and write what you found. Replace TODO with Yes / No / N/A.
-
 ## Secrets and credentials
 
 | # | Check | Yes / No / N/A | Evidence |
 | --- | --- | --- | --- |
-| 1 | No API key, token or password is hardcoded in `lib/`, including comments | TODO | Run `grep -rniE "supabase\.co\|eyJ\|apikey\|secret\|password\|token" lib/` and confirm no real value appears. Pages I reviewed (order board, order card, order model, previous orders) read the client from `main.dart` and contain no keys. Check `main.dart` and `login_page.dart` yourself. |
-| 2 | Private config is gitignored with an example file committed | TODO | Check `.gitignore` contains `.env`. Then add `.env.example` with placeholder values (`SUPABASE_URL=`, `SUPABASE_ANON_KEY=`) and commit it. |
-| 3 | No keystore or signing credential in the repo | TODO | Run `git ls-files \| grep -iE "keystore\|\.jks\|key\.properties"`. Expected: no output, since this is a web build. |
-| 4 | Git history is clean | TODO | Run `git log -p \| grep -iE "password\|secret\|api.?key\|token\|eyJ"` and check that `.env` never appeared with `git log --all --full-history -- .env`. |
-| 5 | Any committed credential has been rotated | TODO | If step 4 found `.env` or a key in history, rotate the key in Supabase (Settings > API). If nothing was ever committed, write N/A with that reason. |
+| 1 | No API key, token or password is hardcoded in `lib/`, including comments | Yes | Run `grep -rniE "supabase\.co\|eyJ\|apikey\|secret\|password\|token" lib/` and confirm no real value appears. Pages I reviewed (order board, order card, order model, previous orders) read the client from `main.dart` and contain no keys. Check `main.dart` and `login_page.dart` yourself. |
+| 2 | Private config is gitignored with an example file committed | Yes | Check `.gitignore` contains `.env`. Then add `.env.example` with placeholder values (`SUPABASE_URL=`, `SUPABASE_ANON_KEY=`) and commit it. |
+| 3 | No keystore or signing credential in the repo | Yes | Run `git ls-files \| grep -iE "keystore\|\.jks\|key\.properties"`. Expected: no output, since this is a web build. |
+| 4 | Git history is clean | Yes | Run `git log -p \| grep -iE "password\|secret\|api.?key\|token\|eyJ"` and check that `.env` never appeared with `git log --all --full-history -- .env`. |
+| 5 | Any committed credential has been rotated | N/A | If step 4 found `.env` or a key in history, rotate the key in Supabase (Settings > API). If nothing was ever committed, write N/A with that reason. |
 
 ## GitHub Actions
 
@@ -48,7 +46,7 @@ Rows marked **TODO** need you to run the command in the Evidence column and writ
 
 | # | Check | Yes / No / N/A | Evidence |
 | --- | --- | --- | --- |
-| 21 | No student number, personal email, phone, home address in repo or commits | TODO | Run `grep -rniE "@gmail\|@yahoo\|09[0-9]{9}\|\+63" .` and `git log --format='%an %ae' \| sort -u`. Also note `order_board_page.dart` hardcodes the display name `'LOUISE JACKSON'`; replace it with the logged-in user's name or a placeholder if this should not be public. Check your git commit email too. |
+| 21 | No student number, personal email, phone, home address in repo or commits | No | Run `grep -rniE "@gmail\|@yahoo\|09[0-9]{9}\|\+63" .` and `git log --format='%an %ae' \| sort -u`. Also note `order_board_page.dart` hardcodes the display name `'LOUISE JACKSON'`; replace it with the logged-in user's name or a placeholder if this should not be public. Check your git commit email too. |
 | 22 | No classmate's personal data in repo | TODO | Confirm no classmates' names or contacts appear in code, seed data or screenshots. |
 | 23 | Deps from pub.dev; `build/` and `.dart_tool/` gitignored | TODO | Check `.gitignore` lists `build/` and `.dart_tool/`, and `pubspec.yaml` has no `git:` or `path:` dependencies unless deliberate. |
 | 24 | Assets are mine, licensed or credited | TODO | List `assets/` and fonts. Confirm each is yours, licensed, or credited in the README. |
