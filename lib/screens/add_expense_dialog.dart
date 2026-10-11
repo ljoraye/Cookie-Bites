@@ -143,7 +143,9 @@ class _AddExpenseDialogState extends State<_AddExpenseDialog> {
                   keyboardType: TextInputType.number,
                   validator: (v) {
                     if (v == null || v.trim().isEmpty) return 'Required';
-                    if (double.tryParse(v) == null) return 'Enter a number';
+                    final amount = double.tryParse(v.trim());
+                    if (amount == null || !amount.isFinite) return 'Enter a number';
+                    if (amount <= 0) return 'Must be greater than 0';
                     return null;
                   },
                 ),
