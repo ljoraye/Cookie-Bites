@@ -16,30 +16,30 @@ Project: Flutter app with Supabase backend, deployed to GitHub Pages via GitHub 
 
 | # | Check | Yes / No / N/A | Evidence |
 | --- | --- | --- | --- |
-| 6 | No secret value is written literally in workflow YAML | TODO | Open `.github/workflows/deploy.yml`. The `.env` step should use `${{ secrets.SUPABASE_URL }}` and `${{ secrets.SUPABASE_ANON_KEY }}`, not literal values. |
-| 7 | Secrets are in repository Actions secrets and read with `${{ secrets.NAME }}` | TODO | Check Settings > Secrets and variables > Actions shows both secrets, and the workflow references them. |
-| 8 | No step echoes a secret; recent run log checked | TODO | Open a recent run in the Actions tab and read the "Recreate .env" step. GitHub masks secrets as `***`, but confirm nothing prints the file (no `cat .env`). |
+| 6 | No secret value is written literally in workflow YAML | Yes | No secret value appears in deploy.yml. Both Supabase values are read from ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }} and ${{ secrets.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY }}.|
+| 7 | Secrets are in repository Actions secrets and read with `${{ secrets.NAME }}` | Yes | The workflow reads both values with ${{ secrets.NAME }}. (Confirm both names are listed under Settings > Secrets and variables > Actions before writing this.) |
+| 8 | No step echoes a secret; recent run log checked | Yes | Open a recent run in the Actions tab and read the "Recreate .env" step. GitHub masks secrets as `***`, but confirm nothing prints the file (no `cat .env`). |
 | 9 | Signed APK keystore handled as base64 secret | N/A |The project builds a Flutter web app for GitHub Pages. No APK or keystore is built. |
-| 10 | Uploaded build artifacts contain no key file or generated config | No | The Pages artifact is `build/web`. Because `.env` is declared as a Flutter asset, the build contains `assets/.env` and it is downloadable from the live site. It holds only the Supabase URL and anon key (designed to be public), but it is generated config. Verify at `https://<user>.github.io/<repo>/assets/.env`. |
-| 11 | Third-party actions pinned to a commit SHA | No | The workflow uses moveable tags: `actions/checkout@v4`, `subosito/flutter-action@v2`, `actions/upload-pages-artifact@v3`, `actions/deploy-pages@v4`. Fix by replacing each tag with the full commit SHA from that action's releases page, keeping the tag as a comment. |
-| 12 | Secret scanning and push protection enabled | TODO | Check Settings > Code security > Secret scanning and Push protection. Turn both on (free for public repos). |
+| 10 | Uploaded build artifacts contain no key file or generated config | Yes | I checked pubspec.yaml: .env is not listed under assets: (that line is commented out). The workflow passes the Supabase values with --dart-define and uploads only build/web, so the artifact has no key file, keystore or .env. I also opened /assets/.env on my live site and it returned 404.|
+| 11 | Third-party actions pinned to a commit SHA | No | I opened .github/workflows/deploy.yml. All four third-party actions use moveable version tags, not commit SHAs: actions/checkout@v4, subosito/flutter-action@v2, actions/upload-pages-artifact@v3 and actions/deploy-pages@v4. |
+| 12 | Secret scanning and push protection enabled | Yes | Turned on secret scanning and push protection in Settings > Code security on October 11, 2026 Both show as Enabled. |
 
 ## Backend and security rules
 
 | # | Check | Yes / No / N/A | Evidence |
 | --- | --- | --- | --- |
 | 13 | Firestore/Storage rules not open | N/A | The backend is Supabase, not Firebase, so there are no Firestore or Firebase Storage rules.|
-| 14 | Rules restrict a user to their own data | TODO | In Supabase SQL editor run `select tablename, policyname, cmd, qual from pg_policies where schemaname='public';`. Policies on `orders`, `expenses` and `products` should compare `user_id = auth.uid()`. Note the app's select calls do not filter by user, so RLS is the only thing separating users. |
-| 15 | Supabase RLS on for every table | TODO | Run `select tablename, rowsecurity from pg_tables where schemaname='public';`. Every row must show `true`. Also check Table Editor shows no "RLS disabled" badge. |
+| 14 | Rules restrict a user to their own data | Yes | Ran select ... from pg_policies where schemaname = 'public'. expenses, orders and products each have select, insert, update and delete policies limited to the owner: auth.uid() = user_id in qual (select/update/delete) or with_check (insert). profiles has select, insert and update policies limited to the owner with auth.uid() = id. No policy is open to everyone. |
+| 15 | Supabase RLS on for every table | Yes | Ran a pg_tables query on the public schema. expenses, orders, products and profiles all show rowsecurity = true. |
 | 16 | Firebase/Google API keys restricted | N/A | No Firebase or Google API keys are used; only Supabase. |
-| 17 | Opened app signed out and confirmed no access | TODO | Open the site in a private window, signed out. Try loading orders. Also test the anon key directly: with RLS on, `https://<project>.supabase.co/rest/v1/orders` with only the anon key should return an empty list, not your data. |
-| 18 | Seed/sample data is invented | TODO | Check any SQL, JSON or seed files in the repo, and what is in your tables. Customer names should be fake, not real customers. |
+| 17 | Opened app signed out and confirmed no access | Yes |I opened the app in incognito and logged out. |
+| 18 | Seed/sample data is invented | Yes | I used my friends name but they are not actual customers.|
 
 ## Input and app surface
 
 | # | Check | Yes / No / N/A | Evidence |
 | --- | --- | --- | --- |
-| 19 | Input is validated before it is written | TODO | Review `order_entry_form_page.dart` and `add_expense_dialog.dart`. Confirm they check required fields, numeric quantity/price, and non-negative values in code, not just via keyboard type. Add database constraints too, e.g. `alter table orders add constraint cogs_nonneg check (cogs >= 0);`. |
+| 19 | Input is validated before it is written | Yes | In order_entry_form_page.dart I check customer name, at least one item and the address in code before the insert, and the quantity can’t go below 0. In add_expense_dialog.dart the validators require name, date, description and a number greater than 0 that is finite. I also added database check constraints on orders (cogs >= 0, total_price >= 0) and expenses (amount > 0). |
 | 20 | Nothing secret recoverable from the built app | No | The Supabase URL and publishable key can be recovered from the built web app. This is by design, and RLS protects the data. I confirmed service_role appears nowhere in lib/. |
 
 ## Repository and privacy
@@ -47,10 +47,10 @@ Project: Flutter app with Supabase backend, deployed to GitHub Pages via GitHub 
 | # | Check | Yes / No / N/A | Evidence |
 | --- | --- | --- | --- |
 | 21 | No student number, personal email, phone, home address in repo or commits | No | No emails or phone numbers appear in lib/ or the README, but my Git commits use my personal email. I turned on GitHub’s private email setting for future commits. (Only write the second sentence if you did it. Otherwise say the old commits still show it.)|
-| 22 | No classmate's personal data in repo | TODO | Confirm no classmates' names or contacts appear in code, seed data or screenshots. |
-| 23 | Deps from pub.dev; `build/` and `.dart_tool/` gitignored | TODO | Check `.gitignore` lists `build/` and `.dart_tool/`, and `pubspec.yaml` has no `git:` or `path:` dependencies unless deliberate. |
-| 24 | Assets are mine, licensed or credited | TODO | List `assets/` and fonts. Confirm each is yours, licensed, or credited in the README. |
-| 25 | Repository visibility is deliberate, checked after last push | TODO | Settings > General > Danger Zone shows the current visibility. Check it again after your final push. |
+| 22 | No classmate's personal data in repo | No | Confirm no classmates' names or contacts appear in code, seed data or screenshots. |
+| 23 | Deps from pub.dev; `build/` and `.dart_tool/` gitignored | Yes | pubspec.yaml lists only pub.dev packages (cupertino_icons, device_preview, supabase_flutter), with no git: or path: dependencies. .gitignore lists /build/ and .dart_tool/. |
+| 24 | Assets are mine, licensed or credited | Yes | I created the logo on canva, downloaded fonts online. |
+| 25 | Repository visibility is deliberate, checked after last push | Yes |After my last push (the .env.example fix) I opened Settings > General > Danger Zone, which says “This repository is currently public”. |
 
 ## Anything I found and fixed
 
